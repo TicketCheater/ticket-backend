@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: web-service
+          uri: lb://web-service
+          predicates:
+            - Path=/web/**
+          filters:
+            - RewritePath=/web/(?<segment>.*),/v1/web/$\{segment}
+        - id: flow-service
+          uri: lb://flow-service
+          predicates:
+            - Path=/flow/**
+          filters:
+            - RewritePath=/flow/(?<segment>.*),/v1/flow/$\{segment}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8000/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+
+server:
+  port: 8001
