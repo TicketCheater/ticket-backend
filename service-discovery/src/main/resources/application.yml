@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: service-discovery
+
+server:
+  port: 8000
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    register-with-eureka: false # registry 에 자신을 등록할 지에 대한 여부 (default: true)
+    fetch-registry: false # registry 에 있는 정보를 가져올 지에 대한 여부 (default: true), 30초마다 Eureka Client 가 Eureka Registry 변경 사항 여부 재확인
+    service-url:
+      defaultZone: https://${eureka.instance.hostname}:${server.port}/eureka/
+    region: default
+
+  # Renews Threshold -> 분당 heartbeat 수 (기본값 30초) * Instance 수 + Spring 에서 구성한 최소 Instance 수 (1) * renewal-percent-threshold 값 계산 후 반올림 한다
+  # ex: 2 * 1 + 1 * 0.85 = 3
+  # Renews (last min) -> 분당 heartbeat 수 (기본값 30초) * Instance 수
+  # ex: 2 * 1 = 2
+  server:
+    renewal-percent-threshold: 0 # 분당 예상 heartbeat 를 계산할 때 사용
+    enable-self-preservation: true # 일시적 Network 장애로 인한 서비스 해제 막기 위한 자기 보호 모드
