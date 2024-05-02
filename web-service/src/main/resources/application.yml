@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: web-service
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: ${LOCAL_DB_URL}
+    username: ${LOCAL_DB_USERNAME}
+    password: ${LOCAL_DB_PASSWORD}
+  jpa:
+    open-in-view: false
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  sql:
+    init:
+      mode: always
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8000/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+
+server:
+  port: 9001
