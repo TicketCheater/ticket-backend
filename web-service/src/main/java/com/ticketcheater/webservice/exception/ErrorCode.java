@@ -10,7 +10,10 @@ public enum ErrorCode {
 
     DUPLICATED_MEMBER(HttpStatus.CONFLICT, "Duplicated member"),
     INVALID_PASSWORD(HttpStatus.FORBIDDEN, "Invalid password"),
-    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "Member not found");
+    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "Member not found"),
+    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "Invalid token"),
+    EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "Expired token"),
+    ;
 
     private final HttpStatus status;
     private final String message;
