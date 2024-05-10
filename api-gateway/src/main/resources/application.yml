@@ -3,13 +3,28 @@ spring:
     name: api-gateway
   cloud:
     gateway:
+      default-filters:
+        - name: LoggingFilter
       routes:
+        - id: web-service
+          uri: lb://web-service
+          predicates:
+            - Path=/web/members/signup
+          filters:
+            - RewritePath=/web/(?<segment>.*),/v1/web/$\{segment}
+        - id: web-service
+          uri: lb://web-service
+          predicates:
+            - Path=/web/members/login
+          filters:
+            - RewritePath=/web/(?<segment>.*),/v1/web/$\{segment}
         - id: web-service
           uri: lb://web-service
           predicates:
             - Path=/web/**
           filters:
             - RewritePath=/web/(?<segment>.*),/v1/web/$\{segment}
+            - AuthorizationHeaderFilter
         - id: flow-service
           uri: lb://flow-service
           predicates:
@@ -26,3 +41,6 @@ eureka:
 
 server:
   port: 8001
+
+jwt:
+  secret-key: ${JWT_SECRET_KEY}
