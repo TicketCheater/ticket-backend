@@ -27,7 +27,7 @@ public class Member extends BaseEntity {
     private String nickname;
 
     @Enumerated(EnumType.STRING)
-    private MemberRole role;
+    private MemberRole role = MemberRole.MEMBER;
 
     public static Member of(String name, String password, String email, String nickname) {
         Member member = new Member();
