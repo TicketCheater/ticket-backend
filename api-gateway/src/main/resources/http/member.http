@@ -4,16 +4,59 @@ Content-Type: application/json
 
 {
   "name": "name",
-  "password": "password",
+  "password": "!password12",
   "email": "email",
   "nickname": "nickname"
 }
 
-### 비밀번호 검증
-POST http://localhost:8001/web/members/validate
+### 로그인
+POST http://localhost:8001/web/members/login
 Content-Type: application/json
 
 {
   "name": "name",
-  "password": "password"
+  "password": "!password12"
 }
+
+> {%
+    client.global.set("accessToken", response.body.result.accessToken);
+    client.global.set("refreshToken", response.body.result.refreshToken);
+%}
+
+### 비밀번호 검증
+POST http://localhost:8001/web/members/validate
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "password": "!password12"
+}
+
+### Access Token 재발급
+POST http://localhost:8001/web/members/reissue
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+> {% client.global.set("accessToken", response.body.result.accessToken); %}
+
+### 로그아웃
+POST http://localhost:8001/web/members/logout
+Authorization: Bearer {{accessToken}}
+
+### 회원 수정
+PATCH http://localhost:8001/web/members/update
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "password": "!password12",
+  "nickname": "nickname"
+}
+
+### 회원 삭제
+PATCH http://localhost:8001/web/members/delete
+Authorization: Bearer {{accessToken}}
