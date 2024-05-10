@@ -1,6 +1,10 @@
 spring:
   application:
     name: web-service
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${LOCAL_DB_URL}
@@ -28,3 +32,10 @@ eureka:
 
 server:
   port: 9001
+
+jwt:
+  secret-key: ${JWT_SECRET_KEY}
+  refresh-key: ${JWT_REFRESH_KEY}
+  token:
+    access-expiration-time: ${JWT_TOKEN_ACCESS_EXPIRATION_TIME}
+    refresh-expiration-time: ${JWT_TOKEN_REFRESH_EXPIRATION_TIME}
