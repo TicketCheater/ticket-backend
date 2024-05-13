@@ -63,7 +63,7 @@ public class MemberControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @DisplayName("중복된 회원 정보로 회원 가입할 경우 오류 발생")
+    @DisplayName("중복된 회원 정보로 회원 가입 시 오류 발생")
     @Test
     void givenDuplicatedMember_whenSignup_thenThrowsError() throws Exception {
         String name = "name";
@@ -80,7 +80,7 @@ public class MemberControllerTest {
                 .andExpect(status().is(ErrorCode.DUPLICATED_MEMBER.getStatus().value()));
     }
 
-    @DisplayName("Invalid 한 PW 로 회원 가입할 경우 오류 발생")
+    @DisplayName("Invalid 한 PW 로 회원 가입 시 오류 발생")
     @Test
     void givenMemberWithInvalidPassword_whenSignup_thenThrowsError() throws Exception {
         String name = "name";
@@ -127,7 +127,7 @@ public class MemberControllerTest {
                 .andExpect(status().is(ErrorCode.MEMBER_NOT_FOUND.getStatus().value()));
     }
 
-    @DisplayName("Invalid 한 PW 로 로그인 할 경우 오류 발생")
+    @DisplayName("Invalid 한 PW 로 로그인 시 오류 발생")
     @Test
     void givenMemberWithInvalidPassword_whenLogin_thenThrowsError() throws Exception {
         String name = "name";
@@ -236,7 +236,7 @@ public class MemberControllerTest {
                 .andExpect(status().is(ErrorCode.MEMBER_NOT_FOUND.getStatus().value()));
     }
 
-    @DisplayName("Invalid 한 PW 로 회원 수정할 경우 오류 발생")
+    @DisplayName("Invalid 한 PW 로 회원 수정 시 오류 발생")
     @Test
     void givenMemberWithInvalidPassword_whenUpdate_thenThrowsError() throws Exception {
         String token = "dummy";
