@@ -1,4 +1,4 @@
-package com.ticketcheater.webservice.controller.response;
+package com.ticketcheater.webservice.controller.response.member;
 
 import com.ticketcheater.webservice.dto.MemberDTO;
 import lombok.AllArgsConstructor;

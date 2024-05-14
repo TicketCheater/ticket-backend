@@ -1,4 +1,4 @@
-package com.ticketcheater.webservice.controller.request;
+package com.ticketcheater.webservice.controller.request.member;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,9 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberSignupRequest {
-    private String name;
+public class MemberUpdateRequest {
     private String password;
-    private String email;
     private String nickname;
 }

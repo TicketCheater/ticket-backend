@@ -1,10 +1,10 @@
 package com.ticketcheater.webservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ticketcheater.webservice.controller.request.MemberLoginRequest;
-import com.ticketcheater.webservice.controller.request.MemberSignupRequest;
-import com.ticketcheater.webservice.controller.request.MemberUpdateRequest;
-import com.ticketcheater.webservice.controller.request.MemberValidateRequest;
+import com.ticketcheater.webservice.controller.request.member.MemberLoginRequest;
+import com.ticketcheater.webservice.controller.request.member.MemberSignupRequest;
+import com.ticketcheater.webservice.controller.request.member.MemberUpdateRequest;
+import com.ticketcheater.webservice.controller.request.member.MemberValidateRequest;
 import com.ticketcheater.webservice.dto.MemberDTO;
 import com.ticketcheater.webservice.exception.ErrorCode;
 import com.ticketcheater.webservice.exception.WebApplicationException;
@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("Controller - 회원")
 @SpringBootTest
 @AutoConfigureMockMvc
-public class MemberControllerTest {
+class MemberControllerTest {
 
     @Autowired
     private MockMvc mvc;
