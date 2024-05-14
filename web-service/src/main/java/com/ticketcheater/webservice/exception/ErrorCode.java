@@ -13,6 +13,8 @@ public enum ErrorCode {
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "Member not found"),
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "Invalid token"),
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "Expired token"),
+    GAME_NOT_FOUND(HttpStatus.NOT_FOUND, "Game not found"),
+    TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "Type not found"),
     ;
 
     private final HttpStatus status;
