@@ -2,6 +2,7 @@ package com.ticketcheater.webservice.service;
 
 import com.ticketcheater.webservice.dto.MemberDTO;
 import com.ticketcheater.webservice.entity.Member;
+import com.ticketcheater.webservice.entity.MemberRole;
 import com.ticketcheater.webservice.exception.ErrorCode;
 import com.ticketcheater.webservice.exception.WebApplicationException;
 import com.ticketcheater.webservice.jwt.JwtTokenProvider;
@@ -91,6 +92,15 @@ public class MemberService {
     // PW 검증 로직, 특수 문자, 영어, 숫자가 모두 있어야 하며 8자 이상 필요
     private boolean isInvalidPassword(String password) {
         return !Pattern.matches("^(?=.*[!@#$%^&*(),.?\":{}|<>])(?=.*[a-zA-Z])(?=.*\\d).{8,}$", password);
+    }
+
+    public void isAdmin(String name) {
+        MemberDTO member = memberRepository.findByName(name).map(MemberDTO::toDTO).orElseThrow(
+                () -> new WebApplicationException(ErrorCode.MEMBER_NOT_FOUND, String.format("member with name %s not found", name)));
+
+        if(!member.getRole().equals(MemberRole.ADMIN)) {
+          throw new WebApplicationException(ErrorCode.INVALID_TOKEN, "invalid token");
+        }
     }
 
 }
