@@ -1,4 +1,4 @@
-package com.ticketcheater.webservice.controller.request;
+package com.ticketcheater.webservice.controller.request.member;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberValidateRequest {
-    private String password;
+public class MemberReissueRequest {
+    private String refreshToken;
 }

@@ -1,6 +1,7 @@
 package com.ticketcheater.webservice.service;
 
 import com.ticketcheater.webservice.config.TestContainerConfig;
+import com.ticketcheater.webservice.entity.MemberRole;
 import com.ticketcheater.webservice.exception.ErrorCode;
 import com.ticketcheater.webservice.exception.WebApplicationException;
 import com.ticketcheater.webservice.fixture.MemberFixture;
@@ -261,6 +262,44 @@ class MemberServiceTest {
 
         WebApplicationException exception = Assertions.assertThrows(WebApplicationException.class,
                 () -> sut.deleteMember(name));
+
+        Assertions.assertEquals(ErrorCode.MEMBER_NOT_FOUND, exception.getCode());
+    }
+
+    @DisplayName("관리자 회원 검증 시 성공")
+    @Test
+    void givenAdminMember_whenIsAdmin_thenSuccess() {
+        String name = "name";
+        MemberRole role = MemberRole.ADMIN;
+
+        when(memberRepository.findByName(name)).thenReturn(Optional.of(MemberFixture.get(role)));
+
+        Assertions.assertDoesNotThrow(() -> sut.isAdmin(name));
+    }
+
+    @DisplayName("일반 회원 검증 시 오류 발생")
+    @Test
+    void givenNonAdminMember_whenIsAdmin_thenThrowsError() {
+        String name = "name";
+        MemberRole role = MemberRole.MEMBER;
+
+        when(memberRepository.findByName(name)).thenReturn(Optional.of(MemberFixture.get(role)));
+
+        WebApplicationException exception = Assertions.assertThrows(WebApplicationException.class,
+                () -> sut.isAdmin(name));
+
+        Assertions.assertEquals(ErrorCode.INVALID_TOKEN, exception.getCode());
+    }
+
+    @DisplayName("없는 회원 검증 시 오류 발생")
+    @Test
+    void givenNonExistentMember_whenIsAdmin_thenThrowsError() {
+        String name = "name";
+
+        when(memberRepository.findByName(name)).thenReturn(Optional.empty());
+
+        WebApplicationException exception = Assertions.assertThrows(WebApplicationException.class,
+                () -> sut.isAdmin(name));
 
         Assertions.assertEquals(ErrorCode.MEMBER_NOT_FOUND, exception.getCode());
     }

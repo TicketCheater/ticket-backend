@@ -1,7 +1,8 @@
 package com.ticketcheater.webservice.controller;
 
-import com.ticketcheater.webservice.controller.request.*;
-import com.ticketcheater.webservice.controller.response.*;
+import com.ticketcheater.webservice.controller.request.member.*;
+import com.ticketcheater.webservice.controller.response.Response;
+import com.ticketcheater.webservice.controller.response.member.*;
 import com.ticketcheater.webservice.jwt.JwtTokenProvider;
 import com.ticketcheater.webservice.jwt.TokenDTO;
 import com.ticketcheater.webservice.service.MemberService;
