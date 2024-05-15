@@ -34,7 +34,6 @@ Content-Type: application/json
 
 ### Access Token 재발급
 POST http://localhost:8001/web/members/reissue
-Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 {

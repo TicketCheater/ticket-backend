@@ -1,10 +1,7 @@
 package com.ticketcheater.webservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ticketcheater.webservice.controller.request.member.MemberLoginRequest;
-import com.ticketcheater.webservice.controller.request.member.MemberSignupRequest;
-import com.ticketcheater.webservice.controller.request.member.MemberUpdateRequest;
-import com.ticketcheater.webservice.controller.request.member.MemberValidateRequest;
+import com.ticketcheater.webservice.controller.request.member.*;
 import com.ticketcheater.webservice.dto.MemberDTO;
 import com.ticketcheater.webservice.exception.ErrorCode;
 import com.ticketcheater.webservice.exception.WebApplicationException;
@@ -196,6 +193,48 @@ class MemberControllerTest {
                         .content(objectMapper.writeValueAsBytes(new MemberValidateRequest(password))))
                 .andDo(print())
                 .andExpect(status().is(ErrorCode.MEMBER_NOT_FOUND.getStatus().value()));
+    }
+
+    @DisplayName("접근 토큰 재발급 정상 동작")
+    @Test
+    void givenRefreshToken_whenReissue_thenReturnsAccessToken() throws Exception {
+        String refreshToken = "dummy";
+
+        when(jwtTokenProvider.reissueAccessToken(refreshToken)).thenReturn(any());
+
+        mvc.perform(post("/v1/web/members/reissue")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(new MemberReissueRequest(refreshToken))))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @DisplayName("부적절한 Refresh 토큰으로 재발급 시 오류 발생")
+    @Test
+    void givenInvalidRefreshToken_whenReissue_thenThrowsError() throws Exception {
+        String refreshToken = "dummy";
+
+        when(jwtTokenProvider.reissueAccessToken(refreshToken)).thenThrow(new WebApplicationException(ErrorCode.INVALID_TOKEN));
+
+        mvc.perform(post("/v1/web/members/reissue")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(new MemberReissueRequest(refreshToken))))
+                .andDo(print())
+                .andExpect(status().is(ErrorCode.INVALID_TOKEN.getStatus().value()));
+    }
+
+    @DisplayName("만료된 Refresh 토큰으로 재발급 시 오류 발생")
+    @Test
+    void givenExpiredRefreshToken_whenReissue_thenThrowsError() throws Exception {
+        String refreshToken = "dummy";
+
+        when(jwtTokenProvider.reissueAccessToken(refreshToken)).thenThrow(new WebApplicationException(ErrorCode.EXPIRED_REFRESH_TOKEN));
+
+        mvc.perform(post("/v1/web/members/reissue")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(new MemberReissueRequest(refreshToken))))
+                .andDo(print())
+                .andExpect(status().is(ErrorCode.EXPIRED_REFRESH_TOKEN.getStatus().value()));
     }
 
     @DisplayName("회원 수정 정상 동작")
