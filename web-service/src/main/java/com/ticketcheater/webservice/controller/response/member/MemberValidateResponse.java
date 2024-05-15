@@ -11,5 +11,4 @@ public class MemberValidateResponse {
     public static MemberValidateResponse from(Boolean isValidate) {
         return new MemberValidateResponse(isValidate);
     }
-
 }

@@ -35,12 +35,14 @@ public class MemberService {
         }
 
         Member member = memberRepository.save(Member.of(name, encoder.encode(password), email, nickname));
+
         return MemberDTO.toDTO(member);
     }
 
     public TokenDTO login(String name, String password) {
         MemberDTO member = memberRepository.findByName(name).map(MemberDTO::toDTO).orElseThrow(
-                () -> new WebApplicationException(ErrorCode.MEMBER_NOT_FOUND, String.format("member with name %s not found", name)));
+                () -> new WebApplicationException(ErrorCode.MEMBER_NOT_FOUND, String.format("member with name %s not found", name))
+        );
 
         if(!encoder.matches(password, member.getPassword())) {
             throw new WebApplicationException(ErrorCode.INVALID_PASSWORD, String.format("password is %s", password));
@@ -59,7 +61,8 @@ public class MemberService {
     @Transactional
     public MemberDTO updateMember(String name, String password, String nickname) {
         Member member = memberRepository.findByName(name).orElseThrow(
-                () -> new WebApplicationException(ErrorCode.MEMBER_NOT_FOUND, String.format("member with name %s not found", name)));
+                () -> new WebApplicationException(ErrorCode.MEMBER_NOT_FOUND, String.format("member with name %s not found", name))
+        );
 
         if(isInvalidPassword(password)) {
             throw new WebApplicationException(ErrorCode.INVALID_PASSWORD, String.format("password is %s", password));
@@ -74,7 +77,8 @@ public class MemberService {
     @Transactional
     public void deleteMember(String name) {
         Member member = memberRepository.findByName(name).orElseThrow(
-                () -> new WebApplicationException(ErrorCode.MEMBER_NOT_FOUND, String.format("member with name %s not found", name)));
+                () -> new WebApplicationException(ErrorCode.MEMBER_NOT_FOUND, String.format("member with name %s not found", name))
+        );
 
         member.setDeletedAt(new Timestamp(System.currentTimeMillis()));
 
@@ -84,7 +88,8 @@ public class MemberService {
     // 입력한 PW 가 기존의 PW 과 일치 여부 확인
     public Boolean validateMember(String name, String password) {
         MemberDTO member = memberRepository.findByName(name).map(MemberDTO::toDTO).orElseThrow(
-                () -> new WebApplicationException(ErrorCode.MEMBER_NOT_FOUND, String.format("member with name %s not found", name)));
+                () -> new WebApplicationException(ErrorCode.MEMBER_NOT_FOUND, String.format("member with name %s not found", name))
+        );
 
         return encoder.matches(password, member.getPassword());
     }
@@ -96,7 +101,8 @@ public class MemberService {
 
     public void isAdmin(String name) {
         MemberDTO member = memberRepository.findByName(name).map(MemberDTO::toDTO).orElseThrow(
-                () -> new WebApplicationException(ErrorCode.MEMBER_NOT_FOUND, String.format("member with name %s not found", name)));
+                () -> new WebApplicationException(ErrorCode.MEMBER_NOT_FOUND, String.format("member with name %s not found", name))
+        );
 
         if(!member.getRole().equals(MemberRole.ADMIN)) {
           throw new WebApplicationException(ErrorCode.INVALID_TOKEN, "invalid token");

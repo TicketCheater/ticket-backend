@@ -14,7 +14,6 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
 import java.util.Objects;
 import java.util.Set;
 
@@ -56,24 +55,16 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
     }
 
     private boolean isJwtValid(String jwt) {
-        boolean isJwtValid = true;
-        Claims payload = null;
-
         try {
-            payload = Jwts.parser()
+            Claims payload = Jwts.parser()
                     .verifyWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
                     .build()
                     .parseSignedClaims(jwt)
                     .getPayload();
+            return payload != null && !payload.get("name", String.class).isEmpty();
         } catch (Exception e) {
-            isJwtValid = false;
+            return false;
         }
-
-        if(payload == null || payload.get("name", String.class).isEmpty() || payload.getExpiration().before(new Date())) {
-            isJwtValid = false;
-        }
-
-        return isJwtValid;
     }
 
     public static class Config {}

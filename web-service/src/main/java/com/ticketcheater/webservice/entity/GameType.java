@@ -4,6 +4,7 @@ import com.ticketcheater.webservice.exception.ErrorCode;
 import com.ticketcheater.webservice.exception.WebApplicationException;
 
 public enum GameType {
+
     BASEBALL,
     SOCCER,
     BASKETBALL,

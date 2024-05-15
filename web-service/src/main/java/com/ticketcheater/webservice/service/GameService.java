@@ -30,6 +30,7 @@ public class GameService {
                         dto.getStartedAt()
                 )
         );
+
         return GameDTO.toDTO(game);
     }
 
@@ -51,8 +52,10 @@ public class GameService {
 
     @Transactional
     public void deleteGame(Long gameId) {
-        Game game = gameRepository.findById(gameId)
-                .orElseThrow(() -> new WebApplicationException(ErrorCode.GAME_NOT_FOUND));
+        Game game = gameRepository.findById(gameId).orElseThrow(
+                () -> new WebApplicationException(ErrorCode.GAME_NOT_FOUND)
+        );
+
         game.setDeletedAt(new Timestamp(System.currentTimeMillis()));
 
         gameRepository.saveAndFlush(game);
