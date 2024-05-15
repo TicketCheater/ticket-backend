@@ -9,13 +9,7 @@ spring:
         - id: web-service
           uri: lb://web-service
           predicates:
-            - Path=/web/members/signup
-          filters:
-            - RewritePath=/web/(?<segment>.*),/v1/web/$\{segment}
-        - id: web-service
-          uri: lb://web-service
-          predicates:
-            - Path=/web/members/login
+            - Path=/web/members/signup,/web/members/login,/web/members/reissue
           filters:
             - RewritePath=/web/(?<segment>.*),/v1/web/$\{segment}
         - id: web-service

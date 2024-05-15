@@ -55,7 +55,7 @@ public class JwtTokenProvider {
 
     public String generateRefreshToken(String name) {
         String refreshToken = doGenerateToken(name, refreshExpirationTimeMs, refreshKey);
-        tokenCacheRepository.setToken(name, refreshKey, refreshExpirationTimeMs);
+        tokenCacheRepository.setToken(name, refreshToken, refreshExpirationTimeMs);
         return refreshToken;
     }
 
@@ -63,18 +63,35 @@ public class JwtTokenProvider {
         tokenCacheRepository.deleteToken(name);
     }
 
-    public String reissueAccessToken(String name, String rtk) {
-        String refreshToken = tokenCacheRepository.getToken(name);
-        if (Objects.isNull(refreshToken)) {
+    /**
+     * access token 을 재발급하는 로직
+     * refresh token 에서 name 을 추출 (이 때 오류가 발생하면 INVALID_TOKEN)
+     * redis 에서 토큰을 가져와서 토큰이 없거나 일치하지 않으면 오류 발생
+     * 오류가 없으면 access token 재발급
+     */
+    public String reissueAccessToken(String refreshToken) {
+        String name;
+
+        try {
+            name = getName(refreshToken, refreshKey);
+        } catch (Exception e) {
+            throw new WebApplicationException(ErrorCode.INVALID_TOKEN);
+        }
+
+        String token = tokenCacheRepository.getToken(name);
+
+        if(Objects.isNull(token)) {
             throw new WebApplicationException(
-                    ErrorCode.EXPIRED_TOKEN, String.format("The refresh token of username %s has expired", name)
+                    ErrorCode.EXPIRED_REFRESH_TOKEN, String.format("The refresh token of member %s has expired", name)
             );
         }
-        if (!name.equals(getName(rtk, refreshKey))) {
+
+        if(!refreshToken.equals(token)) {
             throw new WebApplicationException(
-                    ErrorCode.INVALID_TOKEN, String.format("The refresh token of username %s is not valid", name)
+                    ErrorCode.INVALID_TOKEN, String.format("The refresh token of member %s is not valid", name)
             );
         }
+
         return generateAccessToken(name);
     }
 

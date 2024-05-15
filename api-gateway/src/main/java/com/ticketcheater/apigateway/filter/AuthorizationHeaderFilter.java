@@ -3,6 +3,7 @@ package com.ticketcheater.apigateway.filter;
 import com.ticketcheater.apigateway.exception.ApiGatewayException;
 import com.ticketcheater.apigateway.exception.ErrorCode;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
@@ -47,13 +48,18 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
             String jwt = authorizationHeader.replace("Bearer ", "");
 
             if(!isJwtValid(jwt)) {
-                throw new ApiGatewayException(ErrorCode.INVALID_TOKEN, "Invalid Token");
+                throw new ApiGatewayException(ErrorCode.INVALID_TOKEN, "Invalid token");
             }
 
             return chain.filter(exchange);
         };
     }
 
+    /**
+     * payload 를 추출해서 "name" 필드가 있는 지 확인
+     * 그 전에 토큰이 만료되어서 오류가 발생했다면, EXPIRED_ACCESS_TOKEN 오류 코드를 프런트에 보내고,
+     * 프런트가 /web/members/reissue 로 재발급 요청을 보내도록 유도
+     */
     private boolean isJwtValid(String jwt) {
         try {
             Claims payload = Jwts.parser()
@@ -62,6 +68,8 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
                     .parseSignedClaims(jwt)
                     .getPayload();
             return payload != null && !payload.get("name", String.class).isEmpty();
+        } catch (ExpiredJwtException e) {
+            throw new ApiGatewayException(ErrorCode.EXPIRED_ACCESS_TOKEN, "Expired accessToken");
         } catch (Exception e) {
             return false;
         }

@@ -1,5 +1,7 @@
 package com.ticketcheater.apigateway.filter;
 
+import com.ticketcheater.apigateway.exception.ApiGatewayException;
+import com.ticketcheater.apigateway.exception.ErrorCode;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -11,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.mock.web.server.MockServerWebExchange;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -20,8 +21,7 @@ import org.springframework.web.server.ServerWebExchange;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * AuthorizationHeaderFilter 가 정상적으로 작동하는지 작성한 테스트
@@ -49,9 +49,11 @@ class AuthorizationHeaderFilterTest {
         ServerWebExchange exchange = createMockServerWebExchange("");
         GatewayFilterChain chain = Mockito.mock(GatewayFilterChain.class);
 
-        authorizationHeaderFilter.apply(new AuthorizationHeaderFilter.Config()).filter(exchange, chain);
+        ApiGatewayException exception = assertThrows(ApiGatewayException.class,
+                () -> authorizationHeaderFilter.apply(new AuthorizationHeaderFilter.Config()).filter(exchange, chain)
+        );
 
-        assertEquals(HttpStatus.UNAUTHORIZED, exchange.getResponse().getStatusCode());
+        assertEquals(ErrorCode.INVALID_TOKEN, exception.getCode());
     }
 
     @DisplayName("Invalid 한 토큰이 오면 오류 발생")
@@ -61,9 +63,11 @@ class AuthorizationHeaderFilterTest {
         ServerWebExchange exchange = createMockServerWebExchange("Bearer " + invalidJwt);
         GatewayFilterChain chain = Mockito.mock(GatewayFilterChain.class);
 
-        authorizationHeaderFilter.apply(new AuthorizationHeaderFilter.Config()).filter(exchange, chain);
+        ApiGatewayException exception = assertThrows(ApiGatewayException.class,
+                () -> authorizationHeaderFilter.apply(new AuthorizationHeaderFilter.Config()).filter(exchange, chain)
+        );
 
-        assertEquals(HttpStatus.UNAUTHORIZED, exchange.getResponse().getStatusCode());
+        assertEquals(ErrorCode.INVALID_TOKEN, exception.getCode());
     }
 
     @DisplayName("만료된 토큰이 오면 오류 발생")
@@ -73,9 +77,11 @@ class AuthorizationHeaderFilterTest {
         ServerWebExchange exchange = createMockServerWebExchange("Bearer " + expiredJwt);
         GatewayFilterChain chain = Mockito.mock(GatewayFilterChain.class);
 
-        authorizationHeaderFilter.apply(new AuthorizationHeaderFilter.Config()).filter(exchange, chain);
+        ApiGatewayException exception = assertThrows(ApiGatewayException.class,
+                () -> authorizationHeaderFilter.apply(new AuthorizationHeaderFilter.Config()).filter(exchange, chain)
+        );
 
-        assertEquals(HttpStatus.UNAUTHORIZED, exchange.getResponse().getStatusCode());
+        assertEquals(ErrorCode.EXPIRED_ACCESS_TOKEN, exception.getCode());
     }
 
     @DisplayName("Valid 한 토큰이 오면 필터 통과")
