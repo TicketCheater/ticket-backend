@@ -12,5 +12,4 @@ public class MemberLoginResponse {
     public static MemberLoginResponse from(String accessToken, String refreshToken) {
         return new MemberLoginResponse(accessToken, refreshToken);
     }
-
 }

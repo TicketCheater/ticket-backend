@@ -65,9 +65,9 @@ class MemberServiceTest {
 
         when(memberRepository.findByName(name))
                 .thenReturn(Optional.of(MemberFixture.get(name, password, email, nickname)));
-
-        WebApplicationException exception = Assertions.assertThrows(WebApplicationException.class,
-                () -> sut.signup(name, password, email, nickname));
+        WebApplicationException exception = Assertions.assertThrows(
+                WebApplicationException.class, () -> sut.signup(name, password, email, nickname)
+        );
 
         Assertions.assertEquals(ErrorCode.DUPLICATED_MEMBER, exception.getCode());
     }
@@ -81,9 +81,9 @@ class MemberServiceTest {
         String nickname = "nickname";
 
         when(memberRepository.findByName(name)).thenReturn(Optional.empty());
-
-        WebApplicationException exception = Assertions.assertThrows(WebApplicationException.class,
-                () -> sut.signup(name, password, email, nickname));
+        WebApplicationException exception = Assertions.assertThrows(
+                WebApplicationException.class, () -> sut.signup(name, password, email, nickname)
+        );
 
         Assertions.assertEquals(ErrorCode.INVALID_PASSWORD, exception.getCode());
     }
@@ -110,9 +110,9 @@ class MemberServiceTest {
         String password = "!password12";
 
         when(memberRepository.findByName(name)).thenReturn(Optional.empty());
-
-        WebApplicationException exception = Assertions.assertThrows(WebApplicationException.class,
-                () -> sut.login(name, password));
+        WebApplicationException exception = Assertions.assertThrows(
+                WebApplicationException.class, () -> sut.login(name, password)
+        );
 
         Assertions.assertEquals(ErrorCode.MEMBER_NOT_FOUND, exception.getCode());
     }
@@ -128,9 +128,9 @@ class MemberServiceTest {
         when(memberRepository.findByName(name))
                 .thenReturn(Optional.of(MemberFixture.get(name, password, email, nickname)));
         when(encoder.matches(password, "!password12")).thenReturn(false);
-
-        WebApplicationException exception = Assertions.assertThrows(WebApplicationException.class,
-                () -> sut.login(name, password));
+        WebApplicationException exception = Assertions.assertThrows(
+                WebApplicationException.class, () -> sut.login(name, password)
+        );
 
         Assertions.assertEquals(ErrorCode.INVALID_PASSWORD, exception.getCode());
     }
@@ -175,8 +175,9 @@ class MemberServiceTest {
         String requestPassword = "!password12";
 
         when(memberRepository.findByName(name)).thenReturn(Optional.empty());
-        WebApplicationException exception = Assertions.assertThrows(WebApplicationException.class,
-                () -> sut.validateMember(name, requestPassword));
+        WebApplicationException exception = Assertions.assertThrows(
+                WebApplicationException.class, () -> sut.validateMember(name, requestPassword)
+        );
 
         Assertions.assertEquals(ErrorCode.MEMBER_NOT_FOUND, exception.getCode());
     }
@@ -210,9 +211,9 @@ class MemberServiceTest {
         String nickname = "nickname";
 
         when(memberRepository.findByName(name)).thenReturn(Optional.empty());
-
-        WebApplicationException exception = Assertions.assertThrows(WebApplicationException.class,
-                () -> sut.updateMember(name, password, nickname));
+        WebApplicationException exception = Assertions.assertThrows(
+                WebApplicationException.class, () -> sut.updateMember(name, password, nickname)
+        );
 
         Assertions.assertEquals(ErrorCode.MEMBER_NOT_FOUND, exception.getCode());
     }
@@ -226,9 +227,9 @@ class MemberServiceTest {
         String nickname = "nickname";
 
         when(memberRepository.findByName(name)).thenReturn(Optional.of(MemberFixture.get(name, password, email, nickname)));
-
-        WebApplicationException exception = Assertions.assertThrows(WebApplicationException.class,
-                () -> sut.updateMember(name, password, nickname));
+        WebApplicationException exception = Assertions.assertThrows(
+                WebApplicationException.class, () -> sut.updateMember(name, password, nickname)
+        );
 
         Assertions.assertEquals(ErrorCode.INVALID_PASSWORD, exception.getCode());
     }
@@ -259,9 +260,9 @@ class MemberServiceTest {
         String name = "name";
 
         when(memberRepository.findByName(name)).thenReturn(Optional.empty());
-
-        WebApplicationException exception = Assertions.assertThrows(WebApplicationException.class,
-                () -> sut.deleteMember(name));
+        WebApplicationException exception = Assertions.assertThrows(
+                WebApplicationException.class, () -> sut.deleteMember(name)
+        );
 
         Assertions.assertEquals(ErrorCode.MEMBER_NOT_FOUND, exception.getCode());
     }
@@ -284,9 +285,9 @@ class MemberServiceTest {
         MemberRole role = MemberRole.MEMBER;
 
         when(memberRepository.findByName(name)).thenReturn(Optional.of(MemberFixture.get(role)));
-
-        WebApplicationException exception = Assertions.assertThrows(WebApplicationException.class,
-                () -> sut.isAdmin(name));
+        WebApplicationException exception = Assertions.assertThrows(
+                WebApplicationException.class, () -> sut.isAdmin(name)
+        );
 
         Assertions.assertEquals(ErrorCode.INVALID_TOKEN, exception.getCode());
     }
@@ -297,9 +298,9 @@ class MemberServiceTest {
         String name = "name";
 
         when(memberRepository.findByName(name)).thenReturn(Optional.empty());
-
-        WebApplicationException exception = Assertions.assertThrows(WebApplicationException.class,
-                () -> sut.isAdmin(name));
+        WebApplicationException exception = Assertions.assertThrows(
+                WebApplicationException.class, () -> sut.isAdmin(name)
+        );
 
         Assertions.assertEquals(ErrorCode.MEMBER_NOT_FOUND, exception.getCode());
     }

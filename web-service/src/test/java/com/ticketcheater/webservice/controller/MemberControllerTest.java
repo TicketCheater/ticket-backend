@@ -48,7 +48,7 @@ class MemberControllerTest {
 
     @DisplayName("회원 가입 정상 동작")
     @Test
-    void givenMember_whenSignup_thenSuccess() throws Exception {
+    void givenMember_whenSignup_thenSavesMember() throws Exception {
         String name = "name";
         String password = "!password12";
         String email = "email";
@@ -58,7 +58,7 @@ class MemberControllerTest {
 
         mvc.perform(post("/v1/web/members/signup")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(new MemberSignupRequest(name,password,email,nickname))))
+                        .content(objectMapper.writeValueAsBytes(new MemberSignupRequest(name, password, email, nickname))))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -75,7 +75,7 @@ class MemberControllerTest {
 
         mvc.perform(post("/v1/web/members/signup")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(new MemberSignupRequest(name,password,email,nickname))))
+                        .content(objectMapper.writeValueAsBytes(new MemberSignupRequest(name, password, email, nickname))))
                 .andDo(print())
                 .andExpect(status().is(ErrorCode.DUPLICATED_MEMBER.getStatus().value()));
     }
@@ -92,7 +92,7 @@ class MemberControllerTest {
 
         mvc.perform(post("/v1/web/members/signup")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(new MemberSignupRequest(name,password,email,nickname))))
+                        .content(objectMapper.writeValueAsBytes(new MemberSignupRequest(name, password, email, nickname))))
                 .andDo(print())
                 .andExpect(status().is(ErrorCode.INVALID_PASSWORD.getStatus().value()));
     }
@@ -107,7 +107,7 @@ class MemberControllerTest {
 
         mvc.perform(post("/v1/web/members/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(new MemberLoginRequest(name,password))))
+                        .content(objectMapper.writeValueAsBytes(new MemberLoginRequest(name, password))))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -122,7 +122,7 @@ class MemberControllerTest {
 
         mvc.perform(post("/v1/web/members/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(new MemberLoginRequest(name,password))))
+                        .content(objectMapper.writeValueAsBytes(new MemberLoginRequest(name, password))))
                 .andDo(print())
                 .andExpect(status().is(ErrorCode.MEMBER_NOT_FOUND.getStatus().value()));
     }
@@ -137,7 +137,7 @@ class MemberControllerTest {
 
         mvc.perform(post("/v1/web/members/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(new MemberLoginRequest(name,password))))
+                        .content(objectMapper.writeValueAsBytes(new MemberLoginRequest(name, password))))
                 .andDo(print())
                 .andExpect(status().is(ErrorCode.INVALID_PASSWORD.getStatus().value()));
     }
