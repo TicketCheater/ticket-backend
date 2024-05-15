@@ -42,12 +42,9 @@ public class MemberController {
     }
 
     @PostMapping("/reissue")
-    public Response<MemberReissueResponse> reissue(
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String header,
-            @RequestBody MemberReissueRequest request
-    ) {
+    public Response<MemberReissueResponse> reissue(@RequestBody MemberReissueRequest request) {
         return Response.success(MemberReissueResponse.from(jwtTokenProvider.reissueAccessToken(
-                jwtTokenProvider.getName(header), request.getRefreshToken()
+                request.getRefreshToken()
         )));
     }
 

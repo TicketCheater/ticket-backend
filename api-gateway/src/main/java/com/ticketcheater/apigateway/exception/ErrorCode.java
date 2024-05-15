@@ -8,7 +8,9 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum ErrorCode {
 
-    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "Invalid token");
+    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "Invalid token"),
+    EXPIRED_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "Expired accessToken"),
+    ;
 
     private final HttpStatus status;
     private final String message;
