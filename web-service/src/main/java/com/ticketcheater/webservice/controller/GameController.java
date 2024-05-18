@@ -4,6 +4,7 @@ import com.ticketcheater.webservice.controller.request.game.GameCreateRequest;
 import com.ticketcheater.webservice.controller.request.game.GameUpdateRequest;
 import com.ticketcheater.webservice.controller.response.Response;
 import com.ticketcheater.webservice.controller.response.game.GameCreateResponse;
+import com.ticketcheater.webservice.controller.response.game.GameReadByHomeResponse;
 import com.ticketcheater.webservice.controller.response.game.GameUpdateResponse;
 import com.ticketcheater.webservice.jwt.JwtTokenProvider;
 import com.ticketcheater.webservice.service.GameService;
@@ -32,6 +33,15 @@ public class GameController {
         ));
     }
 
+    @GetMapping("/{teamId}")
+    public Response<GameReadByHomeResponse> getGamesByHome(
+            @PathVariable Long teamId,
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String header
+    ) {
+        memberService.isAdmin(jwtTokenProvider.getName(header));
+        return Response.success(GameReadByHomeResponse.from(teamId, gameService.getGamesByHome(teamId)));
+    }
+
     @PatchMapping("/update/{gameId}")
     public Response<GameUpdateResponse> updateGame(
             @PathVariable Long gameId,
@@ -51,6 +61,16 @@ public class GameController {
     ) {
         memberService.isAdmin(jwtTokenProvider.getName(header));
         gameService.deleteGame(gameId);
+        return Response.success();
+    }
+
+    @PatchMapping("/restore/{gameId}")
+    public Response<Void> restoreGame(
+            @PathVariable Long gameId,
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String header
+    ) {
+        memberService.isAdmin(jwtTokenProvider.getName(header));
+        gameService.restoreGame(gameId);
         return Response.success();
     }
 
