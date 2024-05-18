@@ -20,11 +20,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -102,6 +102,56 @@ class GameControllerTest {
                 .andExpect(status().is(ErrorCode.TYPE_NOT_FOUND.getStatus().value()));
     }
 
+    @DisplayName("팀이 부적절한 게임 생성 시 오류 발생")
+    @Test
+    void givenGameWithInvalidTeam_whenCreate_thenThrowsError() throws Exception {
+        String token = "dummy";
+        String name = "name";
+
+        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        doNothing().when(memberService).isAdmin(name);
+        when(gameService.createGame(any())).thenThrow(new WebApplicationException(ErrorCode.TEAM_NOT_FOUND));
+
+        mvc.perform(post("/v1/web/games/create")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(new GameCreateRequest("wrong", "title", "home", "away", "place", new Timestamp(System.currentTimeMillis())))))
+                .andDo(print())
+                .andExpect(status().is(ErrorCode.TEAM_NOT_FOUND.getStatus().value()));
+    }
+
+    @DisplayName("게임 조회 정상 동작")
+    @Test
+    void givenTeamId_whenRead_thenReadsTeam() throws Exception {
+        String token = "dummy";
+        String name = "name";
+
+        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(gameService.getGamesByHome(eq(1L))).thenReturn(List.of(mock(GameDTO.class)));
+
+        mvc.perform(get("/v1/web/games/1")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @DisplayName("없는 팀의 게임 조회 시 오류 발생")
+    @Test
+    void givenNonExistentTeam_whenRead_thenThrowsError() throws Exception {
+        String token = "dummy";
+        String name = "name";
+
+        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(gameService.getGamesByHome(eq(1L))).thenThrow(new WebApplicationException(ErrorCode.TEAM_NOT_FOUND));
+
+        mvc.perform(get("/v1/web/games/1")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().is(ErrorCode.TEAM_NOT_FOUND.getStatus().value()));
+    }
+
     @DisplayName("게임 수정 정상 동작")
     @Test
     void givenGame_whenUpdate_thenUpdatesGame() throws Exception {
@@ -136,6 +186,24 @@ class GameControllerTest {
                         .content(objectMapper.writeValueAsBytes(new GameUpdateRequest("baseball", "title", "home", "away", "place", new Timestamp(System.currentTimeMillis())))))
                 .andDo(print())
                 .andExpect(status().is(ErrorCode.GAME_NOT_FOUND.getStatus().value()));
+    }
+
+    @DisplayName("팀이 부적절한 게임 수정 시 오류 발생")
+    @Test
+    void givenGameWithInvalidTeam_whenUpdate_thenThrowsError() throws Exception {
+        String token = "dummy";
+        String name = "name";
+
+        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        doNothing().when(memberService).isAdmin(name);
+        when(gameService.updateGame(eq(1L), any())).thenThrow(new WebApplicationException(ErrorCode.TEAM_NOT_FOUND));
+
+        mvc.perform(patch("/v1/web/games/update/1")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(new GameUpdateRequest("baseball", "title", "home", "away", "place", new Timestamp(System.currentTimeMillis())))))
+                .andDo(print())
+                .andExpect(status().is(ErrorCode.TEAM_NOT_FOUND.getStatus().value()));
     }
 
     @DisplayName("관리자가 아닌 회원이 게임 수정 시 오류 발생")
@@ -199,6 +267,54 @@ class GameControllerTest {
         doNothing().when(gameService).deleteGame(eq(1L));
 
         mvc.perform(patch("/v1/web/games/delete/1")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().is(ErrorCode.INVALID_TOKEN.getStatus().value()));
+    }
+
+    @DisplayName("게임 복구 정상 동작")
+    @Test
+    void givenGame_whenRestore_thenRestoresGame() throws Exception {
+        String token = "dummy";
+        String name = "name";
+
+        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        doNothing().when(memberService).isAdmin(name);
+        doNothing().when(gameService).restoreGame(eq(1L));
+
+        mvc.perform(patch("/v1/web/games/restore/1")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @DisplayName("존재하는 게임 복구 시 오류 발생")
+    @Test
+    void givenExistentGame_whenRestore_thenThrowsError() throws Exception {
+        String token = "dummy";
+        String name = "name";
+
+        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        doNothing().when(memberService).isAdmin(name);
+        doThrow(new WebApplicationException(ErrorCode.GAME_ALREADY_EXISTS)).when(gameService).restoreGame(eq(1L));
+
+        mvc.perform(patch("/v1/web/games/restore/1")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andDo(print())
+                .andExpect(status().is(ErrorCode.GAME_ALREADY_EXISTS.getStatus().value()));
+    }
+
+    @DisplayName("관리자가 아닌 회원이 게임 복구 시 오류 발생")
+    @Test
+    void givenNonAdminMember_whenRestore_thenThrowsError() throws Exception {
+        String token = "dummy";
+        String name = "name";
+
+        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        doThrow(new WebApplicationException(ErrorCode.INVALID_TOKEN)).when(memberService).isAdmin(name);
+        doNothing().when(gameService).restoreGame(eq(1L));
+
+        mvc.perform(patch("/v1/web/games/restore/1")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andDo(print())
                 .andExpect(status().is(ErrorCode.INVALID_TOKEN.getStatus().value()));
