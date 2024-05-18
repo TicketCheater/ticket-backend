@@ -8,7 +8,10 @@ import java.sql.Timestamp;
 
 @Getter
 @Setter
-@Table
+@Table(indexes = {
+        @Index(name = "idx_game_id_deletedAt", columnList = "id, deleted_at"),
+        @Index(name = "idx_game_home_deletedAt", columnList = "home, deleted_at")
+})
 @Entity(name = "game")
 public class Game extends BaseEntity {
 
@@ -22,11 +25,13 @@ public class Game extends BaseEntity {
     @Column(name = "title")
     private String title;
 
-    @Column(name = "home")
-    private String home;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "home_id")
+    private Team home;
 
-    @Column(name = "away")
-    private String away;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "away_id")
+    private Team away;
 
     @Column(name = "place")
     private String place;
@@ -34,7 +39,7 @@ public class Game extends BaseEntity {
     @Column(name = "started_at")
     private Timestamp startedAt;
 
-    public static Game of(GameType type, String title, String home, String away, String place, Timestamp startedAt) {
+    public static Game of(GameType type, String title, Team home, Team away, String place, Timestamp startedAt) {
         Game game = new Game();
         game.setType(type);
         game.setTitle(title);
