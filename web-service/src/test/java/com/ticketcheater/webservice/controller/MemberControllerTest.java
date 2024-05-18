@@ -68,13 +68,13 @@ class MemberControllerTest {
         String email = "email";
         String nickname = "nickname";
 
-        when(memberService.signup(name, password, email, nickname)).thenThrow(new WebApplicationException(ErrorCode.DUPLICATED_MEMBER));
+        when(memberService.signup(name, password, email, nickname)).thenThrow(new WebApplicationException(ErrorCode.MEMBER_ALREADY_EXISTS));
 
         mvc.perform(post("/v1/web/members/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(new MemberSignupRequest(name, password, email, nickname))))
                 .andDo(print())
-                .andExpect(status().is(ErrorCode.DUPLICATED_MEMBER.getStatus().value()));
+                .andExpect(status().is(ErrorCode.MEMBER_ALREADY_EXISTS.getStatus().value()));
     }
 
     @DisplayName("Invalid 한 PW 로 회원 가입 시 오류 발생")
