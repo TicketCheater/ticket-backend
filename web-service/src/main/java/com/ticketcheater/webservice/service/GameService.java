@@ -3,20 +3,25 @@ package com.ticketcheater.webservice.service;
 import com.ticketcheater.webservice.dto.GameDTO;
 import com.ticketcheater.webservice.entity.Game;
 import com.ticketcheater.webservice.entity.GameType;
+import com.ticketcheater.webservice.entity.Team;
 import com.ticketcheater.webservice.exception.ErrorCode;
 import com.ticketcheater.webservice.exception.WebApplicationException;
 import com.ticketcheater.webservice.repository.GameRepository;
+import com.ticketcheater.webservice.repository.TeamRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class GameService {
 
     private final GameRepository gameRepository;
+    private final TeamRepository teamRepository;
 
     @Transactional
     public GameDTO createGame(GameDTO dto) {
@@ -24,8 +29,8 @@ public class GameService {
                 Game.of(
                         GameType.fromString(dto.getType()),
                         dto.getTitle(),
-                        dto.getHome(),
-                        dto.getAway(),
+                        findTeamByName(dto.getHome()),
+                        findTeamByName(dto.getAway()),
                         dto.getPlace(),
                         dto.getStartedAt()
                 )
@@ -34,14 +39,26 @@ public class GameService {
         return GameDTO.toDTO(game);
     }
 
+    @Transactional(readOnly = true)
+    public List<GameDTO> getGamesByHome(Long teamId) {
+        Team team = teamRepository.findByIdAndDeletedAtIsNull(teamId)
+                .orElseThrow(() -> new WebApplicationException(ErrorCode.TEAM_NOT_FOUND));
+
+        List<Game> games = gameRepository.findByHomeAndDeletedAtIsNull(team);
+
+        return games.stream()
+                .map(GameDTO::toDTO)
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public GameDTO updateGame(Long gameId, GameDTO dto) {
-        Game game = gameRepository.findById(gameId)
+        Game game = gameRepository.findByIdAndDeletedAtIsNull(gameId)
                 .orElseThrow(() -> new WebApplicationException(ErrorCode.GAME_NOT_FOUND));
 
         game.setTitle(dto.getTitle());
-        game.setHome(dto.getHome());
-        game.setAway(dto.getAway());
+        game.setHome(findTeamByName(dto.getHome()));
+        game.setAway(findTeamByName(dto.getAway()));
         game.setPlace(dto.getPlace());
         game.setStartedAt(dto.getStartedAt());
 
@@ -52,13 +69,29 @@ public class GameService {
 
     @Transactional
     public void deleteGame(Long gameId) {
-        Game game = gameRepository.findById(gameId).orElseThrow(
+        Game game = gameRepository.findByIdAndDeletedAtIsNull(gameId).orElseThrow(
                 () -> new WebApplicationException(ErrorCode.GAME_NOT_FOUND)
         );
 
         game.setDeletedAt(new Timestamp(System.currentTimeMillis()));
 
         gameRepository.saveAndFlush(game);
+    }
+
+    @Transactional
+    public void restoreGame(Long gameId) {
+        Game game = gameRepository.findByIdAndDeletedAtIsNotNull(gameId).orElseThrow(
+                () -> new WebApplicationException(ErrorCode.GAME_ALREADY_EXISTS)
+        );
+
+        game.setDeletedAt(null);
+
+        gameRepository.saveAndFlush(game);
+    }
+
+    private Team findTeamByName(String name) {
+        return teamRepository.findByNameAndDeletedAtIsNull(name)
+                .orElseThrow(() -> new WebApplicationException(ErrorCode.TEAM_NOT_FOUND));
     }
 
 }

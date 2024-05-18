@@ -69,7 +69,7 @@ class MemberServiceTest {
                 WebApplicationException.class, () -> sut.signup(name, password, email, nickname)
         );
 
-        Assertions.assertEquals(ErrorCode.DUPLICATED_MEMBER, exception.getCode());
+        Assertions.assertEquals(ErrorCode.MEMBER_ALREADY_EXISTS, exception.getCode());
     }
 
     @DisplayName("Invalid 한 PW 로 회원 가입 시 오류 발생")
@@ -145,7 +145,7 @@ class MemberServiceTest {
         String email = "email";
         String nickname = "nickname";
 
-        when(memberRepository.findByName(name))
+        when(memberRepository.findByNameAndDeletedAtIsNull(name))
                 .thenReturn(Optional.of(MemberFixture.get(name, password, email, nickname)));
         when(encoder.matches(password, requestPassword)).thenReturn(true);
 
@@ -161,7 +161,7 @@ class MemberServiceTest {
         String email = "email";
         String nickname = "nickname";
 
-        when(memberRepository.findByName(name))
+        when(memberRepository.findByNameAndDeletedAtIsNull(name))
                 .thenReturn(Optional.of(MemberFixture.get(name, password, email, nickname)));
         when(encoder.matches(password, requestPassword)).thenReturn(false);
 
@@ -174,7 +174,7 @@ class MemberServiceTest {
         String name = "name";
         String requestPassword = "!password12";
 
-        when(memberRepository.findByName(name)).thenReturn(Optional.empty());
+        when(memberRepository.findByNameAndDeletedAtIsNull(name)).thenReturn(Optional.empty());
         WebApplicationException exception = Assertions.assertThrows(
                 WebApplicationException.class, () -> sut.validateMember(name, requestPassword)
         );
@@ -190,7 +190,8 @@ class MemberServiceTest {
         String email = "email";
         String nickname = "nickname";
 
-        when(memberRepository.findByName(name)).thenReturn(Optional.of(MemberFixture.get(name, password, email, nickname)));
+        when(memberRepository.findByNameAndDeletedAtIsNull(name))
+                .thenReturn(Optional.of(MemberFixture.get(name, password, email, nickname)));
         when(encoder.encode(password)).thenReturn("password_encrypt");
         when(memberRepository.saveAndFlush(any()))
                 .thenReturn(MemberFixture.get(
@@ -210,7 +211,7 @@ class MemberServiceTest {
         String password = "!password12";
         String nickname = "nickname";
 
-        when(memberRepository.findByName(name)).thenReturn(Optional.empty());
+        when(memberRepository.findByNameAndDeletedAtIsNull(name)).thenReturn(Optional.empty());
         WebApplicationException exception = Assertions.assertThrows(
                 WebApplicationException.class, () -> sut.updateMember(name, password, nickname)
         );
@@ -226,7 +227,8 @@ class MemberServiceTest {
         String email = "email";
         String nickname = "nickname";
 
-        when(memberRepository.findByName(name)).thenReturn(Optional.of(MemberFixture.get(name, password, email, nickname)));
+        when(memberRepository.findByNameAndDeletedAtIsNull(name))
+                .thenReturn(Optional.of(MemberFixture.get(name, password, email, nickname)));
         WebApplicationException exception = Assertions.assertThrows(
                 WebApplicationException.class, () -> sut.updateMember(name, password, nickname)
         );
@@ -242,7 +244,8 @@ class MemberServiceTest {
         String email = "email";
         String nickname = "nickname";
 
-        when(memberRepository.findByName(name)).thenReturn(Optional.of(MemberFixture.get(name, password, email, nickname)));
+        when(memberRepository.findByNameAndDeletedAtIsNull(name))
+                .thenReturn(Optional.of(MemberFixture.get(name, password, email, nickname)));
         when(memberRepository.saveAndFlush(any()))
                 .thenReturn(MemberFixture.get(
                         name,
@@ -259,7 +262,8 @@ class MemberServiceTest {
     void givenNonExistentMember_whenDelete_thenThrowsError() {
         String name = "name";
 
-        when(memberRepository.findByName(name)).thenReturn(Optional.empty());
+        when(memberRepository.findByNameAndDeletedAtIsNull(name))
+                .thenReturn(Optional.empty());
         WebApplicationException exception = Assertions.assertThrows(
                 WebApplicationException.class, () -> sut.deleteMember(name)
         );
@@ -273,7 +277,8 @@ class MemberServiceTest {
         String name = "name";
         MemberRole role = MemberRole.ADMIN;
 
-        when(memberRepository.findByName(name)).thenReturn(Optional.of(MemberFixture.get(role)));
+        when(memberRepository.findByNameAndDeletedAtIsNull(name))
+                .thenReturn(Optional.of(MemberFixture.get(role)));
 
         Assertions.assertDoesNotThrow(() -> sut.isAdmin(name));
     }
@@ -284,7 +289,8 @@ class MemberServiceTest {
         String name = "name";
         MemberRole role = MemberRole.MEMBER;
 
-        when(memberRepository.findByName(name)).thenReturn(Optional.of(MemberFixture.get(role)));
+        when(memberRepository.findByNameAndDeletedAtIsNull(name))
+                .thenReturn(Optional.of(MemberFixture.get(role)));
         WebApplicationException exception = Assertions.assertThrows(
                 WebApplicationException.class, () -> sut.isAdmin(name)
         );
@@ -297,7 +303,8 @@ class MemberServiceTest {
     void givenNonExistentMember_whenIsAdmin_thenThrowsError() {
         String name = "name";
 
-        when(memberRepository.findByName(name)).thenReturn(Optional.empty());
+        when(memberRepository.findByNameAndDeletedAtIsNull(name))
+                .thenReturn(Optional.empty());
         WebApplicationException exception = Assertions.assertThrows(
                 WebApplicationException.class, () -> sut.isAdmin(name)
         );
