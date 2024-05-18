@@ -27,7 +27,7 @@ public class MemberService {
     @Transactional
     public MemberDTO signup(String name, String password, String email, String nickname) {
         memberRepository.findByName(name).ifPresent(it -> {
-            throw new WebApplicationException(ErrorCode.DUPLICATED_MEMBER, String.format("member is %s", name));
+            throw new WebApplicationException(ErrorCode.MEMBER_ALREADY_EXISTS, String.format("member is %s", name));
         });
 
         if(isInvalidPassword(password)) {
@@ -60,7 +60,7 @@ public class MemberService {
 
     @Transactional
     public MemberDTO updateMember(String name, String password, String nickname) {
-        Member member = memberRepository.findByName(name).orElseThrow(
+        Member member = memberRepository.findByNameAndDeletedAtIsNull(name).orElseThrow(
                 () -> new WebApplicationException(ErrorCode.MEMBER_NOT_FOUND, String.format("member with name %s not found", name))
         );
 
@@ -76,7 +76,7 @@ public class MemberService {
 
     @Transactional
     public void deleteMember(String name) {
-        Member member = memberRepository.findByName(name).orElseThrow(
+        Member member = memberRepository.findByNameAndDeletedAtIsNull(name).orElseThrow(
                 () -> new WebApplicationException(ErrorCode.MEMBER_NOT_FOUND, String.format("member with name %s not found", name))
         );
 
@@ -87,7 +87,7 @@ public class MemberService {
 
     // 입력한 PW 가 기존의 PW 과 일치 여부 확인
     public Boolean validateMember(String name, String password) {
-        MemberDTO member = memberRepository.findByName(name).map(MemberDTO::toDTO).orElseThrow(
+        MemberDTO member = memberRepository.findByNameAndDeletedAtIsNull(name).map(MemberDTO::toDTO).orElseThrow(
                 () -> new WebApplicationException(ErrorCode.MEMBER_NOT_FOUND, String.format("member with name %s not found", name))
         );
 
@@ -100,7 +100,7 @@ public class MemberService {
     }
 
     public void isAdmin(String name) {
-        MemberDTO member = memberRepository.findByName(name).map(MemberDTO::toDTO).orElseThrow(
+        MemberDTO member = memberRepository.findByNameAndDeletedAtIsNull(name).map(MemberDTO::toDTO).orElseThrow(
                 () -> new WebApplicationException(ErrorCode.MEMBER_NOT_FOUND, String.format("member with name %s not found", name))
         );
 
