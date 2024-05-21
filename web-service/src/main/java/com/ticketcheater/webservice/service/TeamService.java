@@ -20,7 +20,7 @@ public class TeamService {
 
     @Transactional
     public TeamDTO createTeam(String name) {
-        teamRepository.findByNameAndDeletedAtIsNull(name).ifPresent(it -> {
+        teamRepository.findByName(name).ifPresent(it -> {
             throw new WebApplicationException(ErrorCode.TEAM_ALREADY_EXISTS, String.format("team is %s", name));
         });
 

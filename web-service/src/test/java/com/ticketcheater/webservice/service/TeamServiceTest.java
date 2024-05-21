@@ -35,18 +35,18 @@ class TeamServiceTest {
         Team team = TeamFixture.get(name);
 
         when(teamRepository.save(any())).thenReturn(team);
-        when(teamRepository.findByNameAndDeletedAtIsNull(name)).thenReturn(Optional.empty());
+        when(teamRepository.findByName(name)).thenReturn(Optional.empty());
 
         Assertions.assertDoesNotThrow(() -> sut.createTeam(name));
     }
 
     @DisplayName("이미 존재하는 팀 이름으로 생성 시 오류 발생")
     @Test
-    void givenExistingTeam_whenCreate_thenThrowsError() {
+    void givenExistentTeam_whenCreate_thenThrowsError() {
         String name = "기아타이거즈";
         Team team = TeamFixture.get(name);
 
-        when(teamRepository.findByNameAndDeletedAtIsNull(name)).thenReturn(Optional.of(team));
+        when(teamRepository.findByName(name)).thenReturn(Optional.of(team));
 
         WebApplicationException exception = Assertions.assertThrows(
                 WebApplicationException.class, () -> sut.createTeam(name)
