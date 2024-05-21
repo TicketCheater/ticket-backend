@@ -15,10 +15,12 @@ public enum ErrorCode {
     EXPIRED_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "Expired refreshToken"),
     GAME_NOT_FOUND(HttpStatus.NOT_FOUND, "Game not found"),
     GAME_ALREADY_EXISTS(HttpStatus.CONFLICT, "Game already exists"),
-    TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "Type not found"),
+    GAME_TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "Type not found"),
     TEAM_NOT_FOUND(HttpStatus.NOT_FOUND, "Team not found"),
     TEAM_ALREADY_EXISTS(HttpStatus.CONFLICT, "Team already exists"),
     INVALID_TEAM(HttpStatus.FORBIDDEN, "Invalid team"),
+    PLACE_NOT_FOUND(HttpStatus.NOT_FOUND,  "Place not found"),
+    PAYMENT_METHOD_NOT_FOUND(HttpStatus.NOT_FOUND, "Payment method not found"),
     ;
 
     private final HttpStatus status;

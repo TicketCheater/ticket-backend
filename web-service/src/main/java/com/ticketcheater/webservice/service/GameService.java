@@ -3,10 +3,12 @@ package com.ticketcheater.webservice.service;
 import com.ticketcheater.webservice.dto.GameDTO;
 import com.ticketcheater.webservice.entity.Game;
 import com.ticketcheater.webservice.entity.GameType;
+import com.ticketcheater.webservice.entity.Place;
 import com.ticketcheater.webservice.entity.Team;
 import com.ticketcheater.webservice.exception.ErrorCode;
 import com.ticketcheater.webservice.exception.WebApplicationException;
 import com.ticketcheater.webservice.repository.GameRepository;
+import com.ticketcheater.webservice.repository.PlaceRepository;
 import com.ticketcheater.webservice.repository.TeamRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ public class GameService {
 
     private final GameRepository gameRepository;
     private final TeamRepository teamRepository;
+    private final PlaceRepository placeRepository;
 
     @Transactional
     public GameDTO createGame(GameDTO dto) {
@@ -31,7 +34,7 @@ public class GameService {
                         dto.getTitle(),
                         findTeamByName(dto.getHome()),
                         findTeamByName(dto.getAway()),
-                        dto.getPlace(),
+                        findPlaceByName(dto.getPlace()),
                         dto.getStartedAt()
                 )
         );
@@ -59,7 +62,7 @@ public class GameService {
         game.setTitle(dto.getTitle());
         game.setHome(findTeamByName(dto.getHome()));
         game.setAway(findTeamByName(dto.getAway()));
-        game.setPlace(dto.getPlace());
+        game.setPlace(findPlaceByName(dto.getPlace()));
         game.setStartedAt(dto.getStartedAt());
 
         gameRepository.saveAndFlush(game);
@@ -92,6 +95,11 @@ public class GameService {
     private Team findTeamByName(String name) {
         return teamRepository.findByNameAndDeletedAtIsNull(name)
                 .orElseThrow(() -> new WebApplicationException(ErrorCode.TEAM_NOT_FOUND));
+    }
+
+    private Place findPlaceByName(String name) {
+        return placeRepository.findByName(name)
+                .orElseThrow(() -> new WebApplicationException(ErrorCode.PLACE_NOT_FOUND));
     }
 
 }
