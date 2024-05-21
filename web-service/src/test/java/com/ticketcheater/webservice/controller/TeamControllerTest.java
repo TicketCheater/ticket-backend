@@ -101,6 +101,24 @@ class TeamControllerTest {
                 .andExpect(status().is(ErrorCode.INVALID_TEAM.getStatus().value()));
     }
 
+    @DisplayName("이미 존재하는 팀 이름으로 생성 시 오류 발생")
+    @Test
+    void givenExistentTeam_whenCreate_thenThrowsError() throws Exception {
+        String token = "dummy";
+        String name = "name";
+
+        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        doNothing().when(memberService).isAdmin(name);
+        when(teamService.createTeam(any())).thenThrow(new WebApplicationException(ErrorCode.TEAM_ALREADY_EXISTS));
+
+        mvc.perform(post("/v1/web/teams/create")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(new TeamCreateRequest("invalid"))))
+                .andDo(print())
+                .andExpect(status().is(ErrorCode.TEAM_ALREADY_EXISTS.getStatus().value()));
+    }
+
     @DisplayName("팀 수정 정상 동작")
     @Test
     void givenTeam_whenUpdate_thenUpdatesTeam() throws Exception {
