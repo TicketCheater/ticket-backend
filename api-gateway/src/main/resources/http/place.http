@@ -1,0 +1,39 @@
+### 관리자 로그인
+POST http://localhost:8001/web/members/login
+Content-Type: application/json
+
+{
+  "name": "master",
+  "password": "!password12"
+}
+
+> {%
+    client.global.set("accessToken", response.body.result.accessToken);
+    client.global.set("refreshToken", response.body.result.refreshToken);
+%}
+
+### 장소 생성
+POST http://localhost:8001/web/places/create
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "name": "광주기아챔피언스필드"
+}
+
+### 장소 수정
+PATCH http://localhost:8001/web/places/update/1
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "name": "사직야구장"
+}
+
+### 장소 삭제
+PATCH http://localhost:8001/web/places/delete/1
+Authorization: Bearer {{accessToken}}
+
+### 장소 복구
+PATCH http://localhost:8001/web/places/restore/1
+Authorization: Bearer {{accessToken}}
