@@ -20,6 +20,8 @@ public enum ErrorCode {
     TEAM_ALREADY_EXISTS(HttpStatus.CONFLICT, "Team already exists"),
     INVALID_TEAM(HttpStatus.FORBIDDEN, "Invalid team"),
     PLACE_NOT_FOUND(HttpStatus.NOT_FOUND,  "Place not found"),
+    PLACE_ALREADY_EXISTS(HttpStatus.CONFLICT, "Place already exists"),
+    INVALID_PLACE(HttpStatus.FORBIDDEN, "Invalid place"),
     PAYMENT_METHOD_NOT_FOUND(HttpStatus.NOT_FOUND, "Payment method not found"),
     ;
 
