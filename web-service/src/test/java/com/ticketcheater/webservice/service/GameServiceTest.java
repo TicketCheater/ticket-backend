@@ -62,7 +62,7 @@ class GameServiceTest {
         when(gameRepository.save(any())).thenReturn(game);
         when(teamRepository.findByNameAndDeletedAtIsNull(dto.getHome())).thenReturn(Optional.of(home));
         when(teamRepository.findByNameAndDeletedAtIsNull(dto.getAway())).thenReturn(Optional.of(away));
-        when(placeRepository.findByName(dto.getPlace())).thenReturn(Optional.of(place));
+        when(placeRepository.findByNameAndDeletedAtIsNull(dto.getPlace())).thenReturn(Optional.of(place));
 
         Assertions.assertDoesNotThrow(() -> sut.createGame(dto));
     }
@@ -98,7 +98,7 @@ class GameServiceTest {
         when(gameRepository.save(any())).thenReturn(game);
         when(teamRepository.findByNameAndDeletedAtIsNull(dto.getHome())).thenReturn(Optional.empty());
         when(teamRepository.findByNameAndDeletedAtIsNull(dto.getAway())).thenReturn(Optional.of(away));
-        when(placeRepository.findByName(dto.getPlace())).thenReturn(Optional.of(place));
+        when(placeRepository.findByNameAndDeletedAtIsNull(dto.getPlace())).thenReturn(Optional.of(place));
 
         WebApplicationException exception = Assertions.assertThrows(
                 WebApplicationException.class, () -> sut.createGame(dto)
@@ -126,7 +126,7 @@ class GameServiceTest {
         when(gameRepository.save(any())).thenReturn(game);
         when(teamRepository.findByNameAndDeletedAtIsNull(dto.getHome())).thenReturn(Optional.of(home));
         when(teamRepository.findByNameAndDeletedAtIsNull(dto.getAway())).thenReturn(Optional.empty());
-        when(placeRepository.findByName(dto.getPlace())).thenReturn(Optional.of(place));
+        when(placeRepository.findByNameAndDeletedAtIsNull(dto.getPlace())).thenReturn(Optional.of(place));
 
         WebApplicationException exception = Assertions.assertThrows(
                 WebApplicationException.class, () -> sut.createGame(dto)
@@ -154,7 +154,7 @@ class GameServiceTest {
         when(gameRepository.save(any())).thenReturn(game);
         when(teamRepository.findByNameAndDeletedAtIsNull(dto.getHome())).thenReturn(Optional.of(home));
         when(teamRepository.findByNameAndDeletedAtIsNull(dto.getAway())).thenReturn(Optional.of(away));
-        when(placeRepository.findByName(dto.getPlace())).thenReturn(Optional.empty());
+        when(placeRepository.findByNameAndDeletedAtIsNull(dto.getPlace())).thenReturn(Optional.empty());
 
         WebApplicationException exception = Assertions.assertThrows(
                 WebApplicationException.class, () -> sut.createGame(dto)
@@ -209,7 +209,7 @@ class GameServiceTest {
         when(gameRepository.findByIdAndDeletedAtIsNull(gameId)).thenReturn(Optional.of(game));
         when(teamRepository.findByNameAndDeletedAtIsNull(dto.getHome())).thenReturn(Optional.of(home));
         when(teamRepository.findByNameAndDeletedAtIsNull(dto.getAway())).thenReturn(Optional.of(away));
-        when(placeRepository.findByName(dto.getPlace())).thenReturn(Optional.of(place));
+        when(placeRepository.findByNameAndDeletedAtIsNull(dto.getPlace())).thenReturn(Optional.of(place));
         when(gameRepository.saveAndFlush(any())).thenReturn(game);
 
         Assertions.assertDoesNotThrow(() -> sut.updateGame(gameId, dto));
@@ -249,7 +249,7 @@ class GameServiceTest {
         when(gameRepository.findByIdAndDeletedAtIsNull(gameId)).thenReturn(Optional.of(game));
         when(teamRepository.findByNameAndDeletedAtIsNull(dto.getHome())).thenReturn(Optional.empty());
         when(teamRepository.findByNameAndDeletedAtIsNull(dto.getAway())).thenReturn(Optional.of(away));
-        when(placeRepository.findByName(dto.getPlace())).thenReturn(Optional.of(place));
+        when(placeRepository.findByNameAndDeletedAtIsNull(dto.getPlace())).thenReturn(Optional.of(place));
         when(gameRepository.saveAndFlush(any())).thenReturn(game);
 
         WebApplicationException exception = Assertions.assertThrows(
@@ -279,7 +279,7 @@ class GameServiceTest {
         when(gameRepository.findByIdAndDeletedAtIsNull(gameId)).thenReturn(Optional.of(game));
         when(teamRepository.findByNameAndDeletedAtIsNull(dto.getHome())).thenReturn(Optional.of(home));
         when(teamRepository.findByNameAndDeletedAtIsNull(dto.getAway())).thenReturn(Optional.empty());
-        when(placeRepository.findByName(dto.getPlace())).thenReturn(Optional.of(place));
+        when(placeRepository.findByNameAndDeletedAtIsNull(dto.getPlace())).thenReturn(Optional.of(place));
         when(gameRepository.saveAndFlush(any())).thenReturn(game);
 
         WebApplicationException exception = Assertions.assertThrows(
@@ -309,7 +309,7 @@ class GameServiceTest {
         when(gameRepository.findByIdAndDeletedAtIsNull(gameId)).thenReturn(Optional.of(game));
         when(teamRepository.findByNameAndDeletedAtIsNull(dto.getHome())).thenReturn(Optional.of(home));
         when(teamRepository.findByNameAndDeletedAtIsNull(dto.getAway())).thenReturn(Optional.of(away));
-        when(placeRepository.findByName(dto.getPlace())).thenReturn(Optional.empty());
+        when(placeRepository.findByNameAndDeletedAtIsNull(dto.getPlace())).thenReturn(Optional.empty());
         when(gameRepository.saveAndFlush(any())).thenReturn(game);
 
         WebApplicationException exception = Assertions.assertThrows(
@@ -340,7 +340,7 @@ class GameServiceTest {
         when(gameRepository.findByIdAndDeletedAtIsNull(gameId)).thenReturn(Optional.of(game));
         when(teamRepository.findByNameAndDeletedAtIsNull(dto.getHome())).thenReturn(Optional.of(home));
         when(teamRepository.findByNameAndDeletedAtIsNull(dto.getAway())).thenReturn(Optional.of(away));
-        when(placeRepository.findByName(dto.getPlace())).thenReturn(Optional.of(place));
+        when(placeRepository.findByNameAndDeletedAtIsNull(dto.getPlace())).thenReturn(Optional.of(place));
         when(gameRepository.saveAndFlush(any())).thenReturn(game);
 
         Assertions.assertDoesNotThrow(() -> sut.deleteGame(gameId));
@@ -380,7 +380,7 @@ class GameServiceTest {
         when(gameRepository.findByIdAndDeletedAtIsNotNull(gameId)).thenReturn(Optional.of(game));
         when(teamRepository.findByNameAndDeletedAtIsNull(dto.getHome())).thenReturn(Optional.of(home));
         when(teamRepository.findByNameAndDeletedAtIsNull(dto.getAway())).thenReturn(Optional.of(away));
-        when(placeRepository.findByName(dto.getPlace())).thenReturn(Optional.of(place));
+        when(placeRepository.findByNameAndDeletedAtIsNull(dto.getPlace())).thenReturn(Optional.of(place));
         when(gameRepository.saveAndFlush(any())).thenReturn(game);
 
         Assertions.assertDoesNotThrow(() -> sut.restoreGame(gameId));

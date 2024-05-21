@@ -98,7 +98,7 @@ public class GameService {
     }
 
     private Place findPlaceByName(String name) {
-        return placeRepository.findByName(name)
+        return placeRepository.findByNameAndDeletedAtIsNull(name)
                 .orElseThrow(() -> new WebApplicationException(ErrorCode.PLACE_NOT_FOUND));
     }
 

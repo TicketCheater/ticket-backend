@@ -6,7 +6,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Table
+@Table(indexes = {
+        @Index(name = "idx_place_id_deletedAt", columnList = "id, deleted_at"),
+        @Index(name = "idx_place_name", columnList = "name", unique = true),
+        @Index(name = "idx_place_name_deletedAt", columnList = "name, deleted_at")
+})
 @Entity
 public class Place extends BaseEntity {
 
@@ -14,7 +18,7 @@ public class Place extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name")
+    @Column(name = "name", unique = true, nullable = false)
     private String name;
 
     public static Place of(String name) {

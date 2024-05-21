@@ -1,14 +1,14 @@
 package com.ticketcheater.webservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ticketcheater.webservice.controller.request.team.TeamCreateRequest;
-import com.ticketcheater.webservice.controller.request.team.TeamUpdateRequest;
-import com.ticketcheater.webservice.dto.TeamDTO;
+import com.ticketcheater.webservice.controller.request.place.PlaceCreateRequest;
+import com.ticketcheater.webservice.controller.request.place.PlaceUpdateRequest;
+import com.ticketcheater.webservice.dto.PlaceDTO;
 import com.ticketcheater.webservice.exception.ErrorCode;
 import com.ticketcheater.webservice.exception.WebApplicationException;
 import com.ticketcheater.webservice.jwt.JwtTokenProvider;
 import com.ticketcheater.webservice.service.MemberService;
-import com.ticketcheater.webservice.service.TeamService;
+import com.ticketcheater.webservice.service.PlaceService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +27,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@DisplayName("Controller - 팀")
+@DisplayName("Controller - 장소")
 @SpringBootTest
 @AutoConfigureMockMvc
-class TeamControllerTest {
+class PlaceControllerTest {
 
     @Autowired
     private MockMvc mvc;
@@ -42,30 +42,30 @@ class TeamControllerTest {
     JwtTokenProvider jwtTokenProvider;
 
     @MockBean
-    TeamService teamService;
+    PlaceService placeService;
 
     @Autowired
     private ObjectMapper objectMapper;
 
-    @DisplayName("팀 생성 정상 동작")
+    @DisplayName("장소 생성 정상 동작")
     @Test
-    void givenTeam_whenCreate_thenCreatesTeam() throws Exception {
+    void givenPlace_whenCreate_thenCreatesPlace() throws Exception {
         String token = "dummy";
         String name = "name";
 
         when(jwtTokenProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
-        when(teamService.createTeam(any())).thenReturn(mock(TeamDTO.class));
+        when(placeService.createPlace(any())).thenReturn(mock(PlaceDTO.class));
 
-        mvc.perform(post("/v1/web/teams/create")
+        mvc.perform(post("/v1/web/places/create")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(new TeamCreateRequest("팀이름"))))
+                        .content(objectMapper.writeValueAsBytes(new PlaceCreateRequest("장소이름"))))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
 
-    @DisplayName("관리자가 아닌 회원이 팀 생성 시 오류 발생")
+    @DisplayName("관리자가 아닌 회원이 장소 생성 시 오류 발생")
     @Test
     void givenNonAdminMember_whenCreate_thenThrowsError() throws Exception {
         String token = "dummy";
@@ -73,107 +73,107 @@ class TeamControllerTest {
 
         when(jwtTokenProvider.getName(anyString())).thenReturn(name);
         doThrow(new WebApplicationException(ErrorCode.INVALID_TOKEN)).when(memberService).isAdmin(name);
-        when(teamService.createTeam(any())).thenReturn(mock(TeamDTO.class));
+        when(placeService.createPlace(any())).thenReturn(mock(PlaceDTO.class));
 
-        mvc.perform(post("/v1/web/teams/create")
+        mvc.perform(post("/v1/web/places/create")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(new TeamCreateRequest("팀이름"))))
+                        .content(objectMapper.writeValueAsBytes(new PlaceCreateRequest("장소이름"))))
                 .andDo(print())
                 .andExpect(status().is(ErrorCode.INVALID_TOKEN.getStatus().value()));
     }
 
-    @DisplayName("부적절한 이름으로 팀 생성 시 오류 발생")
+    @DisplayName("부적절한 이름으로 장소 생성 시 오류 발생")
     @Test
-    void givenTeamWithInvalidName_whenCreate_thenThrowsError() throws Exception {
+    void givenPlaceWithInvalidName_whenCreate_thenThrowsError() throws Exception {
         String token = "dummy";
         String name = "name";
 
         when(jwtTokenProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
-        when(teamService.createTeam(any())).thenThrow(new WebApplicationException(ErrorCode.INVALID_TEAM));
+        when(placeService.createPlace(any())).thenThrow(new WebApplicationException(ErrorCode.INVALID_PLACE));
 
-        mvc.perform(post("/v1/web/teams/create")
+        mvc.perform(post("/v1/web/places/create")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(new TeamCreateRequest("invalid"))))
+                        .content(objectMapper.writeValueAsBytes(new PlaceCreateRequest("invalid"))))
                 .andDo(print())
-                .andExpect(status().is(ErrorCode.INVALID_TEAM.getStatus().value()));
+                .andExpect(status().is(ErrorCode.INVALID_PLACE.getStatus().value()));
     }
 
-    @DisplayName("이미 존재하는 팀 이름으로 생성 시 오류 발생")
+    @DisplayName("이미 존재하는 장소 이름으로 생성 시 오류 발생")
     @Test
-    void givenExistentTeam_whenCreate_thenThrowsError() throws Exception {
+    void givenExistentPlace_whenCreate_thenThrowsError() throws Exception {
         String token = "dummy";
         String name = "name";
 
         when(jwtTokenProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
-        when(teamService.createTeam(any())).thenThrow(new WebApplicationException(ErrorCode.TEAM_ALREADY_EXISTS));
+        when(placeService.createPlace(any())).thenThrow(new WebApplicationException(ErrorCode.PLACE_ALREADY_EXISTS));
 
-        mvc.perform(post("/v1/web/teams/create")
+        mvc.perform(post("/v1/web/places/create")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(new TeamCreateRequest("invalid"))))
+                        .content(objectMapper.writeValueAsBytes(new PlaceCreateRequest("장소이름"))))
                 .andDo(print())
-                .andExpect(status().is(ErrorCode.TEAM_ALREADY_EXISTS.getStatus().value()));
+                .andExpect(status().is(ErrorCode.PLACE_ALREADY_EXISTS.getStatus().value()));
     }
 
-    @DisplayName("팀 수정 정상 동작")
+    @DisplayName("장소 수정 정상 동작")
     @Test
-    void givenTeam_whenUpdate_thenUpdatesTeam() throws Exception {
+    void givenPlace_whenUpdate_thenUpdatesPlace() throws Exception {
         String token = "dummy";
         String name = "name";
 
         when(jwtTokenProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
-        when(teamService.updateTeam(eq(1L), any())).thenReturn(mock(TeamDTO.class));
+        when(placeService.updatePlace(eq(1L), any())).thenReturn(mock(PlaceDTO.class));
 
-        mvc.perform(patch("/v1/web/teams/update/1")
+        mvc.perform(patch("/v1/web/places/update/1")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(new TeamUpdateRequest("새팀이름"))))
+                        .content(objectMapper.writeValueAsBytes(new PlaceUpdateRequest("새장소이름"))))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
 
-    @DisplayName("없는 팀 수정 시 오류 발생")
+    @DisplayName("없는 장소 수정 시 오류 발생")
     @Test
-    void givenNonExistentTeam_whenUpdate_thenThrowsError() throws Exception {
+    void givenNonExistentPlace_whenUpdate_thenThrowsError() throws Exception {
         String token = "dummy";
         String name = "name";
 
         when(jwtTokenProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
-        when(teamService.updateTeam(eq(1L), any())).thenThrow(new WebApplicationException(ErrorCode.TEAM_NOT_FOUND));
+        when(placeService.updatePlace(eq(1L), any())).thenThrow(new WebApplicationException(ErrorCode.PLACE_NOT_FOUND));
 
-        mvc.perform(patch("/v1/web/teams/update/1")
+        mvc.perform(patch("/v1/web/places/update/1")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(new TeamUpdateRequest("새팀이름"))))
+                        .content(objectMapper.writeValueAsBytes(new PlaceUpdateRequest("새장소이름"))))
                 .andDo(print())
-                .andExpect(status().is(ErrorCode.TEAM_NOT_FOUND.getStatus().value()));
+                .andExpect(status().is(ErrorCode.PLACE_NOT_FOUND.getStatus().value()));
     }
 
-    @DisplayName("부적절한 이름으로 팀 생성 시 오류 발생")
+    @DisplayName("부적절한 이름으로 장소 수정 시 오류 발생")
     @Test
-    void givenTeamWithInvalidName_whenUpdate_thenThrowsError() throws Exception {
+    void givenPlaceWithInvalidName_whenUpdate_thenThrowsError() throws Exception {
         String token = "dummy";
         String name = "name";
 
         when(jwtTokenProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
-        when(teamService.updateTeam(eq(1L), any())).thenThrow(new WebApplicationException(ErrorCode.INVALID_TEAM));
+        when(placeService.updatePlace(eq(1L), any())).thenThrow(new WebApplicationException(ErrorCode.INVALID_PLACE));
 
-        mvc.perform(patch("/v1/web/teams/update/1")
+        mvc.perform(patch("/v1/web/places/update/1")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(new TeamUpdateRequest("invalid"))))
+                        .content(objectMapper.writeValueAsBytes(new PlaceUpdateRequest("invalid"))))
                 .andDo(print())
-                .andExpect(status().is(ErrorCode.INVALID_TEAM.getStatus().value()));
+                .andExpect(status().is(ErrorCode.INVALID_PLACE.getStatus().value()));
     }
 
-    @DisplayName("관리자가 아닌 회원이 팀 수정 시 오류 발생")
+    @DisplayName("관리자가 아닌 회원이 장소 수정 시 오류 발생")
     @Test
     void givenNonAdminMember_whenUpdate_thenThrowsError() throws Exception {
         String token = "dummy";
@@ -181,49 +181,49 @@ class TeamControllerTest {
 
         when(jwtTokenProvider.getName(anyString())).thenReturn(name);
         doThrow(new WebApplicationException(ErrorCode.INVALID_TOKEN)).when(memberService).isAdmin(name);
-        when(teamService.updateTeam(eq(1L), any())).thenReturn(mock(TeamDTO.class));
+        when(placeService.updatePlace(eq(1L), any())).thenReturn(mock(PlaceDTO.class));
 
-        mvc.perform(patch("/v1/web/teams/update/1")
+        mvc.perform(patch("/v1/web/places/update/1")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(new TeamUpdateRequest("새팀이름"))))
+                        .content(objectMapper.writeValueAsBytes(new PlaceUpdateRequest("새장소이름"))))
                 .andDo(print())
                 .andExpect(status().is(ErrorCode.INVALID_TOKEN.getStatus().value()));
     }
 
-    @DisplayName("팀 삭제 정상 동작")
+    @DisplayName("장소 삭제 정상 동작")
     @Test
-    void givenTeam_whenDelete_thenDeletesTeam() throws Exception {
+    void givenPlace_whenDelete_thenDeletesPlace() throws Exception {
         String token = "dummy";
         String name = "name";
 
         when(jwtTokenProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
-        doNothing().when(teamService).deleteTeam(eq(1L));
+        doNothing().when(placeService).deletePlace(eq(1L));
 
-        mvc.perform(patch("/v1/web/teams/delete/1")
+        mvc.perform(patch("/v1/web/places/delete/1")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
 
-    @DisplayName("없는 팀 삭제 시 오류 발생")
+    @DisplayName("없는 장소 삭제 시 오류 발생")
     @Test
-    void givenNonExistentTeam_whenDelete_thenThrowsError() throws Exception {
+    void givenNonExistentPlace_whenDelete_thenThrowsError() throws Exception {
         String token = "dummy";
         String name = "name";
 
         when(jwtTokenProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
-        doThrow(new WebApplicationException(ErrorCode.TEAM_NOT_FOUND)).when(teamService).deleteTeam(eq(1L));
+        doThrow(new WebApplicationException(ErrorCode.PLACE_NOT_FOUND)).when(placeService).deletePlace(eq(1L));
 
-        mvc.perform(patch("/v1/web/teams/delete/1")
+        mvc.perform(patch("/v1/web/places/delete/1")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andDo(print())
-                .andExpect(status().is(ErrorCode.TEAM_NOT_FOUND.getStatus().value()));
+                .andExpect(status().is(ErrorCode.PLACE_NOT_FOUND.getStatus().value()));
     }
 
-    @DisplayName("관리자가 아닌 회원이 팀 삭제 시 오류 발생")
+    @DisplayName("관리자가 아닌 회원이 장소 삭제 시 오류 발생")
     @Test
     void givenNonAdminMember_whenDelete_thenThrowsError() throws Exception {
         String token = "dummy";
@@ -231,47 +231,47 @@ class TeamControllerTest {
 
         when(jwtTokenProvider.getName(anyString())).thenReturn(name);
         doThrow(new WebApplicationException(ErrorCode.INVALID_TOKEN)).when(memberService).isAdmin(name);
-        doNothing().when(teamService).deleteTeam(eq(1L));
+        doNothing().when(placeService).deletePlace(eq(1L));
 
-        mvc.perform(patch("/v1/web/teams/delete/1")
+        mvc.perform(patch("/v1/web/places/delete/1")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andDo(print())
                 .andExpect(status().is(ErrorCode.INVALID_TOKEN.getStatus().value()));
     }
 
-    @DisplayName("팀 복구 정상 동작")
+    @DisplayName("장소 복구 정상 동작")
     @Test
-    void givenTeam_whenRestore_thenRestoresTeam() throws Exception {
+    void givenPlace_whenRestore_thenRestoresPlace() throws Exception {
         String token = "dummy";
         String name = "name";
 
         when(jwtTokenProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
-        doNothing().when(teamService).restoreTeam(eq(1L));
+        doNothing().when(placeService).restorePlace(eq(1L));
 
-        mvc.perform(patch("/v1/web/teams/restore/1")
+        mvc.perform(patch("/v1/web/places/restore/1")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
 
-    @DisplayName("존재하는 팀 삭제 시 오류 발생")
+    @DisplayName("없는 장소 복구 시 오류 발생")
     @Test
-    void givenExistentTeam_whenRestore_thenThrowsError() throws Exception {
+    void givenNonExistentPlace_whenRestore_thenThrowsError() throws Exception {
         String token = "dummy";
         String name = "name";
 
         when(jwtTokenProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
-        doThrow(new WebApplicationException(ErrorCode.TEAM_ALREADY_EXISTS)).when(teamService).restoreTeam(eq(1L));
+        doThrow(new WebApplicationException(ErrorCode.PLACE_NOT_FOUND)).when(placeService).restorePlace(eq(1L));
 
-        mvc.perform(patch("/v1/web/teams/restore/1")
+        mvc.perform(patch("/v1/web/places/restore/1")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andDo(print())
-                .andExpect(status().is(ErrorCode.TEAM_ALREADY_EXISTS.getStatus().value()));
+                .andExpect(status().is(ErrorCode.PLACE_NOT_FOUND.getStatus().value()));
     }
 
-    @DisplayName("관리자가 아닌 회원이 팀 복구 시 오류 발생")
+    @DisplayName("관리자가 아닌 회원이 장소 복구 시 오류 발생")
     @Test
     void givenNonAdminMember_whenRestore_thenThrowsError() throws Exception {
         String token = "dummy";
@@ -279,9 +279,9 @@ class TeamControllerTest {
 
         when(jwtTokenProvider.getName(anyString())).thenReturn(name);
         doThrow(new WebApplicationException(ErrorCode.INVALID_TOKEN)).when(memberService).isAdmin(name);
-        doNothing().when(teamService).restoreTeam(eq(1L));
+        doNothing().when(placeService).restorePlace(eq(1L));
 
-        mvc.perform(patch("/v1/web/teams/restore/1")
+        mvc.perform(patch("/v1/web/places/restore/1")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andDo(print())
                 .andExpect(status().is(ErrorCode.INVALID_TOKEN.getStatus().value()));
