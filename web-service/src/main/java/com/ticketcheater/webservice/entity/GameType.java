@@ -15,7 +15,7 @@ public enum GameType {
         try {
             return GameType.valueOf(param.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new WebApplicationException(ErrorCode.TYPE_NOT_FOUND);
+            throw new WebApplicationException(ErrorCode.GAME_TYPE_NOT_FOUND);
         }
     }
 

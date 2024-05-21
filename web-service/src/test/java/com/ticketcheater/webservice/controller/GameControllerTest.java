@@ -92,14 +92,14 @@ class GameControllerTest {
 
         when(jwtTokenProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
-        when(gameService.createGame(any())).thenThrow(new WebApplicationException(ErrorCode.TYPE_NOT_FOUND));
+        when(gameService.createGame(any())).thenThrow(new WebApplicationException(ErrorCode.GAME_TYPE_NOT_FOUND));
 
         mvc.perform(post("/v1/web/games/create")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(new GameCreateRequest("wrong", "title", "home", "away", "place", new Timestamp(System.currentTimeMillis())))))
                 .andDo(print())
-                .andExpect(status().is(ErrorCode.TYPE_NOT_FOUND.getStatus().value()));
+                .andExpect(status().is(ErrorCode.GAME_TYPE_NOT_FOUND.getStatus().value()));
     }
 
     @DisplayName("팀이 부적절한 게임 생성 시 오류 발생")
@@ -115,9 +115,27 @@ class GameControllerTest {
         mvc.perform(post("/v1/web/games/create")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(new GameCreateRequest("wrong", "title", "home", "away", "place", new Timestamp(System.currentTimeMillis())))))
+                        .content(objectMapper.writeValueAsBytes(new GameCreateRequest("baseball", "title", "home", "away", "place", new Timestamp(System.currentTimeMillis())))))
                 .andDo(print())
                 .andExpect(status().is(ErrorCode.TEAM_NOT_FOUND.getStatus().value()));
+    }
+
+    @DisplayName("장소가 부적절한 게임 생성 시 오류 발생")
+    @Test
+    void givenGameWithInvalidPlace_whenCreate_thenThrowsError() throws Exception {
+        String token = "dummy";
+        String name = "name";
+
+        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        doNothing().when(memberService).isAdmin(name);
+        when(gameService.createGame(any())).thenThrow(new WebApplicationException(ErrorCode.PLACE_NOT_FOUND));
+
+        mvc.perform(post("/v1/web/games/create")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(new GameCreateRequest("baseball", "title", "home", "away", "place", new Timestamp(System.currentTimeMillis())))))
+                .andDo(print())
+                .andExpect(status().is(ErrorCode.PLACE_NOT_FOUND.getStatus().value()));
     }
 
     @DisplayName("게임 조회 정상 동작")
@@ -204,6 +222,24 @@ class GameControllerTest {
                         .content(objectMapper.writeValueAsBytes(new GameUpdateRequest("baseball", "title", "home", "away", "place", new Timestamp(System.currentTimeMillis())))))
                 .andDo(print())
                 .andExpect(status().is(ErrorCode.TEAM_NOT_FOUND.getStatus().value()));
+    }
+
+    @DisplayName("장소가 부적절한 게임 수정 시 오류 발생")
+    @Test
+    void givenGameWithInvalidPlace_whenUpdate_thenThrowsError() throws Exception {
+        String token = "dummy";
+        String name = "name";
+
+        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        doNothing().when(memberService).isAdmin(name);
+        when(gameService.updateGame(eq(1L), any())).thenThrow(new WebApplicationException(ErrorCode.PLACE_NOT_FOUND));
+
+        mvc.perform(patch("/v1/web/games/update/1")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(new GameUpdateRequest("baseball", "title", "home", "away", "place", new Timestamp(System.currentTimeMillis())))))
+                .andDo(print())
+                .andExpect(status().is(ErrorCode.PLACE_NOT_FOUND.getStatus().value()));
     }
 
     @DisplayName("관리자가 아닌 회원이 게임 수정 시 오류 발생")

@@ -38,7 +38,7 @@ public class GameDTO {
                 game.getTitle(),
                 game.getHome().getName(),
                 game.getAway().getName(),
-                game.getPlace(),
+                game.getPlace().getName(),
                 game.getStartedAt(),
                 game.getCreatedAt(),
                 game.getUpdatedAt(),
