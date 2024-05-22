@@ -7,7 +7,6 @@ import java.util.Optional;
 
 public interface TeamRepository extends JpaRepository<Team, Long> {
     Optional<Team> findByName(String name);
-    Optional<Team> findByNameAndDeletedAtIsNull(String name);
     Optional<Team> findByIdAndDeletedAtIsNull(Long teamId);
     Optional<Team> findByIdAndDeletedAtIsNotNull(Long teamId);
 }

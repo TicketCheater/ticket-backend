@@ -32,9 +32,9 @@ public class GameService {
                 Game.of(
                         GameType.fromString(dto.getType()),
                         dto.getTitle(),
-                        findTeamByName(dto.getHome()),
-                        findTeamByName(dto.getAway()),
-                        findPlaceByName(dto.getPlace()),
+                        findTeamById(dto.getHomeId()),
+                        findTeamById(dto.getAwayId()),
+                        findPlaceById(dto.getPlaceId()),
                         dto.getStartedAt()
                 )
         );
@@ -60,9 +60,9 @@ public class GameService {
                 .orElseThrow(() -> new WebApplicationException(ErrorCode.GAME_NOT_FOUND));
 
         game.setTitle(dto.getTitle());
-        game.setHome(findTeamByName(dto.getHome()));
-        game.setAway(findTeamByName(dto.getAway()));
-        game.setPlace(findPlaceByName(dto.getPlace()));
+        game.setHome(findTeamById(dto.getHomeId()));
+        game.setAway(findTeamById(dto.getAwayId()));
+        game.setPlace(findPlaceById(dto.getPlaceId()));
         game.setStartedAt(dto.getStartedAt());
 
         gameRepository.saveAndFlush(game);
@@ -92,13 +92,13 @@ public class GameService {
         gameRepository.saveAndFlush(game);
     }
 
-    private Team findTeamByName(String name) {
-        return teamRepository.findByNameAndDeletedAtIsNull(name)
+    private Team findTeamById(Long teamId) {
+        return teamRepository.findByIdAndDeletedAtIsNull(teamId)
                 .orElseThrow(() -> new WebApplicationException(ErrorCode.TEAM_NOT_FOUND));
     }
 
-    private Place findPlaceByName(String name) {
-        return placeRepository.findByNameAndDeletedAtIsNull(name)
+    private Place findPlaceById(Long placeId) {
+        return placeRepository.findByIdAndDeletedAtIsNull(placeId)
                 .orElseThrow(() -> new WebApplicationException(ErrorCode.PLACE_NOT_FOUND));
     }
 

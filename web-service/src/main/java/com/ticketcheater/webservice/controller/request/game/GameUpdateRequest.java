@@ -11,12 +11,12 @@ import java.sql.Timestamp;
 public class GameUpdateRequest {
     private String type;
     private String title;
-    private String home;
-    private String away;
-    private String place;
+    private Long homeId;
+    private Long awayId;
+    private Long placeId;
     private Timestamp startedAt;
 
     public GameDTO toDTO() {
-        return GameDTO.of(type, title, home, away, place, startedAt);
+        return GameDTO.of(type, title, homeId, awayId, placeId, startedAt);
     }
 }

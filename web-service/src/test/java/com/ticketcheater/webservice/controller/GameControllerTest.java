@@ -61,7 +61,7 @@ class GameControllerTest {
         mvc.perform(post("/v1/web/games/create")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(new GameCreateRequest("baseball", "title", "home", "away", "place", new Timestamp(System.currentTimeMillis())))))
+                        .content(objectMapper.writeValueAsBytes(new GameCreateRequest("baseball", "title", 1L, 2L, 1L, new Timestamp(System.currentTimeMillis())))))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -79,7 +79,7 @@ class GameControllerTest {
         mvc.perform(post("/v1/web/games/create")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(new GameCreateRequest("baseball", "title", "home", "away", "place", new Timestamp(System.currentTimeMillis())))))
+                        .content(objectMapper.writeValueAsBytes(new GameCreateRequest("baseball", "title", 1L, 2L, 1L, new Timestamp(System.currentTimeMillis())))))
                 .andDo(print())
                 .andExpect(status().is(ErrorCode.INVALID_TOKEN.getStatus().value()));
     }
@@ -97,7 +97,7 @@ class GameControllerTest {
         mvc.perform(post("/v1/web/games/create")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(new GameCreateRequest("wrong", "title", "home", "away", "place", new Timestamp(System.currentTimeMillis())))))
+                        .content(objectMapper.writeValueAsBytes(new GameCreateRequest("wrong", "title", 1L, 2L, 1L, new Timestamp(System.currentTimeMillis())))))
                 .andDo(print())
                 .andExpect(status().is(ErrorCode.GAME_TYPE_NOT_FOUND.getStatus().value()));
     }
@@ -115,7 +115,7 @@ class GameControllerTest {
         mvc.perform(post("/v1/web/games/create")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(new GameCreateRequest("baseball", "title", "home", "away", "place", new Timestamp(System.currentTimeMillis())))))
+                        .content(objectMapper.writeValueAsBytes(new GameCreateRequest("baseball", "title", 1L, 2L, 1L, new Timestamp(System.currentTimeMillis())))))
                 .andDo(print())
                 .andExpect(status().is(ErrorCode.TEAM_NOT_FOUND.getStatus().value()));
     }
@@ -133,7 +133,7 @@ class GameControllerTest {
         mvc.perform(post("/v1/web/games/create")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(new GameCreateRequest("baseball", "title", "home", "away", "place", new Timestamp(System.currentTimeMillis())))))
+                        .content(objectMapper.writeValueAsBytes(new GameCreateRequest("baseball", "title", 1L, 2L, 1L, new Timestamp(System.currentTimeMillis())))))
                 .andDo(print())
                 .andExpect(status().is(ErrorCode.PLACE_NOT_FOUND.getStatus().value()));
     }
@@ -183,7 +183,7 @@ class GameControllerTest {
         mvc.perform(patch("/v1/web/games/update/1")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(new GameUpdateRequest("baseball", "title", "home", "away", "place", new Timestamp(System.currentTimeMillis())))))
+                        .content(objectMapper.writeValueAsBytes(new GameUpdateRequest("baseball", "title", 1L, 2L, 1L, new Timestamp(System.currentTimeMillis())))))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -201,7 +201,7 @@ class GameControllerTest {
         mvc.perform(patch("/v1/web/games/update/1")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(new GameUpdateRequest("baseball", "title", "home", "away", "place", new Timestamp(System.currentTimeMillis())))))
+                        .content(objectMapper.writeValueAsBytes(new GameUpdateRequest("baseball", "title", 1L, 2L, 1L, new Timestamp(System.currentTimeMillis())))))
                 .andDo(print())
                 .andExpect(status().is(ErrorCode.GAME_NOT_FOUND.getStatus().value()));
     }
@@ -219,7 +219,7 @@ class GameControllerTest {
         mvc.perform(patch("/v1/web/games/update/1")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(new GameUpdateRequest("baseball", "title", "home", "away", "place", new Timestamp(System.currentTimeMillis())))))
+                        .content(objectMapper.writeValueAsBytes(new GameUpdateRequest("baseball", "title", 1L, 2L, 1L, new Timestamp(System.currentTimeMillis())))))
                 .andDo(print())
                 .andExpect(status().is(ErrorCode.TEAM_NOT_FOUND.getStatus().value()));
     }
@@ -237,7 +237,7 @@ class GameControllerTest {
         mvc.perform(patch("/v1/web/games/update/1")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(new GameUpdateRequest("baseball", "title", "home", "away", "place", new Timestamp(System.currentTimeMillis())))))
+                        .content(objectMapper.writeValueAsBytes(new GameUpdateRequest("baseball", "title", 1L, 2L, 1L, new Timestamp(System.currentTimeMillis())))))
                 .andDo(print())
                 .andExpect(status().is(ErrorCode.PLACE_NOT_FOUND.getStatus().value()));
     }
@@ -255,7 +255,7 @@ class GameControllerTest {
         mvc.perform(patch("/v1/web/games/update/1")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(new GameUpdateRequest("baseball", "title", "home", "away", "place", new Timestamp(System.currentTimeMillis())))))
+                        .content(objectMapper.writeValueAsBytes(new GameUpdateRequest("baseball", "title", 1L, 2L, 1L, new Timestamp(System.currentTimeMillis())))))
                 .andDo(print())
                 .andExpect(status().is(ErrorCode.INVALID_TOKEN.getStatus().value()));
     }
