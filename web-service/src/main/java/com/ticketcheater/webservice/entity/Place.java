@@ -9,7 +9,6 @@ import lombok.Setter;
 @Table(indexes = {
         @Index(name = "idx_place_id_deletedAt", columnList = "id, deleted_at"),
         @Index(name = "idx_place_name", columnList = "name", unique = true),
-        @Index(name = "idx_place_name_deletedAt", columnList = "name, deleted_at")
 })
 @Entity
 public class Place extends BaseEntity {
