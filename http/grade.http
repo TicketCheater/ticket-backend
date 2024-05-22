@@ -12,28 +12,30 @@ Content-Type: application/json
     client.global.set("refreshToken", response.body.result.refreshToken);
 %}
 
-### 팀 생성
-POST http://localhost:8001/web/teams/create
+### 등급 생성
+POST http://localhost:8001/web/grades/create
 Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 {
-  "name": "기아타이거즈"
+  "placeId": 10,
+  "name": "내야석"
 }
 
-### 팀 수정
-PATCH http://localhost:8001/web/teams/update/1
+### 등급 수정
+PATCH http://localhost:8001/web/grades/update/148
 Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 {
-  "name": "롯데자이언츠"
+  "placeId": 10,
+  "name": "내야석"
 }
 
-### 팀 삭제
-PATCH http://localhost:8001/web/teams/delete/1
+### 등급 삭제
+PATCH http://localhost:8001/web/grades/delete/148
 Authorization: Bearer {{accessToken}}
 
-### 팀 복구
-PATCH http://localhost:8001/web/teams/restore/1
+### 등급 복구
+PATCH http://localhost:8001/web/grades/restore/148
 Authorization: Bearer {{accessToken}}

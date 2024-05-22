@@ -1,0 +1,39 @@
+### 관리자 로그인
+POST http://localhost:8001/web/members/login
+Content-Type: application/json
+
+{
+  "name": "master",
+  "password": "!password12"
+}
+
+> {%
+    client.global.set("accessToken", response.body.result.accessToken);
+    client.global.set("refreshToken", response.body.result.refreshToken);
+%}
+
+### 팀 생성
+POST http://localhost:8001/web/teams/create
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "name": "다저스"
+}
+
+### 팀 수정
+PATCH http://localhost:8001/web/teams/update/11
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "name": "파드리스"
+}
+
+### 팀 삭제
+PATCH http://localhost:8001/web/teams/delete/11
+Authorization: Bearer {{accessToken}}
+
+### 팀 복구
+PATCH http://localhost:8001/web/teams/restore/11
+Authorization: Bearer {{accessToken}}

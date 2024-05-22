@@ -7,7 +7,6 @@ import java.util.Optional;
 
 public interface PlaceRepository extends JpaRepository<Place, Long> {
     Optional<Place> findByName(String name);
-    Optional<Place> findByNameAndDeletedAtIsNull(String name);
     Optional<Place> findByIdAndDeletedAtIsNull(Long placeId);
     Optional<Place> findByIdAndDeletedAtIsNotNull(Long placeId);
 }

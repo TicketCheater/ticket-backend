@@ -46,9 +46,9 @@ class GameServiceTest {
     @Test
     void givenGame_whenCreate_thenCreatesGame() {
         GameDTO dto = GameDTOFixture.get("baseball");
-        Team home = TeamFixture.get(dto.getHome());
-        Team away = TeamFixture.get(dto.getAway());
-        Place place = PlaceFixture.get(dto.getPlace());
+        Team home = TeamFixture.get(dto.getHomeId());
+        Team away = TeamFixture.get(dto.getAwayId());
+        Place place = PlaceFixture.get(dto.getPlaceId());
 
         Game game = Game.of(
                 GameType.fromString(dto.getType()),
@@ -60,9 +60,9 @@ class GameServiceTest {
         );
 
         when(gameRepository.save(any())).thenReturn(game);
-        when(teamRepository.findByNameAndDeletedAtIsNull(dto.getHome())).thenReturn(Optional.of(home));
-        when(teamRepository.findByNameAndDeletedAtIsNull(dto.getAway())).thenReturn(Optional.of(away));
-        when(placeRepository.findByNameAndDeletedAtIsNull(dto.getPlace())).thenReturn(Optional.of(place));
+        when(teamRepository.findByIdAndDeletedAtIsNull(dto.getHomeId())).thenReturn(Optional.of(home));
+        when(teamRepository.findByIdAndDeletedAtIsNull(dto.getAwayId())).thenReturn(Optional.of(away));
+        when(placeRepository.findByIdAndDeletedAtIsNull(dto.getPlaceId())).thenReturn(Optional.of(place));
 
         Assertions.assertDoesNotThrow(() -> sut.createGame(dto));
     }
@@ -83,8 +83,8 @@ class GameServiceTest {
     @Test
     void givenGameWithInvalidHome_whenCreate_thenThrowsError() {
         GameDTO dto = GameDTOFixture.get("baseball");
-        Team away = TeamFixture.get(dto.getAway());
-        Place place = PlaceFixture.get(dto.getPlace());
+        Team away = TeamFixture.get(dto.getAwayId());
+        Place place = PlaceFixture.get(dto.getPlaceId());
 
         Game game = Game.of(
                 GameType.fromString(dto.getType()),
@@ -96,9 +96,9 @@ class GameServiceTest {
         );
 
         when(gameRepository.save(any())).thenReturn(game);
-        when(teamRepository.findByNameAndDeletedAtIsNull(dto.getHome())).thenReturn(Optional.empty());
-        when(teamRepository.findByNameAndDeletedAtIsNull(dto.getAway())).thenReturn(Optional.of(away));
-        when(placeRepository.findByNameAndDeletedAtIsNull(dto.getPlace())).thenReturn(Optional.of(place));
+        when(teamRepository.findByIdAndDeletedAtIsNull(dto.getHomeId())).thenReturn(Optional.empty());
+        when(teamRepository.findByIdAndDeletedAtIsNull(dto.getAwayId())).thenReturn(Optional.of(away));
+        when(placeRepository.findByIdAndDeletedAtIsNull(dto.getPlaceId())).thenReturn(Optional.of(place));
 
         WebApplicationException exception = Assertions.assertThrows(
                 WebApplicationException.class, () -> sut.createGame(dto)
@@ -111,8 +111,8 @@ class GameServiceTest {
     @Test
     void givenGameWithInvalidAway_whenCreate_thenThrowsError() {
         GameDTO dto = GameDTOFixture.get("baseball");
-        Team home = TeamFixture.get(dto.getHome());
-        Place place = PlaceFixture.get(dto.getPlace());
+        Team home = TeamFixture.get(dto.getHomeId());
+        Place place = PlaceFixture.get(dto.getPlaceId());
 
         Game game = Game.of(
                 GameType.fromString(dto.getType()),
@@ -124,9 +124,9 @@ class GameServiceTest {
         );
 
         when(gameRepository.save(any())).thenReturn(game);
-        when(teamRepository.findByNameAndDeletedAtIsNull(dto.getHome())).thenReturn(Optional.of(home));
-        when(teamRepository.findByNameAndDeletedAtIsNull(dto.getAway())).thenReturn(Optional.empty());
-        when(placeRepository.findByNameAndDeletedAtIsNull(dto.getPlace())).thenReturn(Optional.of(place));
+        when(teamRepository.findByIdAndDeletedAtIsNull(dto.getHomeId())).thenReturn(Optional.of(home));
+        when(teamRepository.findByIdAndDeletedAtIsNull(dto.getAwayId())).thenReturn(Optional.empty());
+        when(placeRepository.findByIdAndDeletedAtIsNull(dto.getPlaceId())).thenReturn(Optional.of(place));
 
         WebApplicationException exception = Assertions.assertThrows(
                 WebApplicationException.class, () -> sut.createGame(dto)
@@ -139,8 +139,8 @@ class GameServiceTest {
     @Test
     void givenGameWithInvalidPlace_whenCreate_thenThrowsError() {
         GameDTO dto = GameDTOFixture.get("baseball");
-        Team home = TeamFixture.get(dto.getHome());
-        Team away = TeamFixture.get(dto.getAway());
+        Team home = TeamFixture.get(dto.getHomeId());
+        Team away = TeamFixture.get(dto.getAwayId());
 
         Game game = Game.of(
                 GameType.fromString(dto.getType()),
@@ -152,9 +152,9 @@ class GameServiceTest {
         );
 
         when(gameRepository.save(any())).thenReturn(game);
-        when(teamRepository.findByNameAndDeletedAtIsNull(dto.getHome())).thenReturn(Optional.of(home));
-        when(teamRepository.findByNameAndDeletedAtIsNull(dto.getAway())).thenReturn(Optional.of(away));
-        when(placeRepository.findByNameAndDeletedAtIsNull(dto.getPlace())).thenReturn(Optional.empty());
+        when(teamRepository.findByIdAndDeletedAtIsNull(dto.getHomeId())).thenReturn(Optional.of(home));
+        when(teamRepository.findByIdAndDeletedAtIsNull(dto.getAwayId())).thenReturn(Optional.of(away));
+        when(placeRepository.findByIdAndDeletedAtIsNull(dto.getPlaceId())).thenReturn(Optional.empty());
 
         WebApplicationException exception = Assertions.assertThrows(
                 WebApplicationException.class, () -> sut.createGame(dto)
@@ -193,9 +193,9 @@ class GameServiceTest {
     void givenGame_whenUpdate_thenUpdatesGame() {
         Long gameId = 1L;
         GameDTO dto = GameDTOFixture.get("baseball");
-        Team home = TeamFixture.get(dto.getHome());
-        Team away = TeamFixture.get(dto.getAway());
-        Place place = PlaceFixture.get(dto.getPlace());
+        Team home = TeamFixture.get(dto.getHomeId());
+        Team away = TeamFixture.get(dto.getAwayId());
+        Place place = PlaceFixture.get(dto.getPlaceId());
 
         Game game = Game.of(
                 GameType.fromString(dto.getType()),
@@ -207,9 +207,9 @@ class GameServiceTest {
         );
 
         when(gameRepository.findByIdAndDeletedAtIsNull(gameId)).thenReturn(Optional.of(game));
-        when(teamRepository.findByNameAndDeletedAtIsNull(dto.getHome())).thenReturn(Optional.of(home));
-        when(teamRepository.findByNameAndDeletedAtIsNull(dto.getAway())).thenReturn(Optional.of(away));
-        when(placeRepository.findByNameAndDeletedAtIsNull(dto.getPlace())).thenReturn(Optional.of(place));
+        when(teamRepository.findByIdAndDeletedAtIsNull(dto.getHomeId())).thenReturn(Optional.of(home));
+        when(teamRepository.findByIdAndDeletedAtIsNull(dto.getAwayId())).thenReturn(Optional.of(away));
+        when(placeRepository.findByIdAndDeletedAtIsNull(dto.getPlaceId())).thenReturn(Optional.of(place));
         when(gameRepository.saveAndFlush(any())).thenReturn(game);
 
         Assertions.assertDoesNotThrow(() -> sut.updateGame(gameId, dto));
@@ -234,8 +234,8 @@ class GameServiceTest {
     void givenGameWithInvalidHome_whenUpdate_thenThrowsError() {
         Long gameId = 1L;
         GameDTO dto = GameDTOFixture.get("baseball");
-        Team away = TeamFixture.get(dto.getAway());
-        Place place = PlaceFixture.get(dto.getPlace());
+        Team away = TeamFixture.get(dto.getAwayId());
+        Place place = PlaceFixture.get(dto.getPlaceId());
 
         Game game = Game.of(
                 GameType.fromString(dto.getType()),
@@ -247,9 +247,9 @@ class GameServiceTest {
         );
 
         when(gameRepository.findByIdAndDeletedAtIsNull(gameId)).thenReturn(Optional.of(game));
-        when(teamRepository.findByNameAndDeletedAtIsNull(dto.getHome())).thenReturn(Optional.empty());
-        when(teamRepository.findByNameAndDeletedAtIsNull(dto.getAway())).thenReturn(Optional.of(away));
-        when(placeRepository.findByNameAndDeletedAtIsNull(dto.getPlace())).thenReturn(Optional.of(place));
+        when(teamRepository.findByIdAndDeletedAtIsNull(dto.getHomeId())).thenReturn(Optional.empty());
+        when(teamRepository.findByIdAndDeletedAtIsNull(dto.getAwayId())).thenReturn(Optional.of(away));
+        when(placeRepository.findByIdAndDeletedAtIsNull(dto.getPlaceId())).thenReturn(Optional.of(place));
         when(gameRepository.saveAndFlush(any())).thenReturn(game);
 
         WebApplicationException exception = Assertions.assertThrows(
@@ -264,8 +264,8 @@ class GameServiceTest {
     void givenGameWithInvalidAway_whenUpdate_thenThrowsError() {
         Long gameId = 1L;
         GameDTO dto = GameDTOFixture.get("baseball");
-        Team home = TeamFixture.get(dto.getHome());
-        Place place = PlaceFixture.get(dto.getPlace());
+        Team home = TeamFixture.get(dto.getHomeId());
+        Place place = PlaceFixture.get(dto.getPlaceId());
 
         Game game = Game.of(
                 GameType.fromString(dto.getType()),
@@ -277,9 +277,9 @@ class GameServiceTest {
         );
 
         when(gameRepository.findByIdAndDeletedAtIsNull(gameId)).thenReturn(Optional.of(game));
-        when(teamRepository.findByNameAndDeletedAtIsNull(dto.getHome())).thenReturn(Optional.of(home));
-        when(teamRepository.findByNameAndDeletedAtIsNull(dto.getAway())).thenReturn(Optional.empty());
-        when(placeRepository.findByNameAndDeletedAtIsNull(dto.getPlace())).thenReturn(Optional.of(place));
+        when(teamRepository.findByIdAndDeletedAtIsNull(dto.getHomeId())).thenReturn(Optional.of(home));
+        when(teamRepository.findByIdAndDeletedAtIsNull(dto.getAwayId())).thenReturn(Optional.empty());
+        when(placeRepository.findByIdAndDeletedAtIsNull(dto.getPlaceId())).thenReturn(Optional.of(place));
         when(gameRepository.saveAndFlush(any())).thenReturn(game);
 
         WebApplicationException exception = Assertions.assertThrows(
@@ -294,8 +294,8 @@ class GameServiceTest {
     void givenGameWithInvalidPlace_whenUpdate_thenThrowsError() {
         Long gameId = 1L;
         GameDTO dto = GameDTOFixture.get("baseball");
-        Team home = TeamFixture.get(dto.getHome());
-        Team away = TeamFixture.get(dto.getAway());
+        Team home = TeamFixture.get(dto.getHomeId());
+        Team away = TeamFixture.get(dto.getAwayId());
 
         Game game = Game.of(
                 GameType.fromString(dto.getType()),
@@ -307,9 +307,9 @@ class GameServiceTest {
         );
 
         when(gameRepository.findByIdAndDeletedAtIsNull(gameId)).thenReturn(Optional.of(game));
-        when(teamRepository.findByNameAndDeletedAtIsNull(dto.getHome())).thenReturn(Optional.of(home));
-        when(teamRepository.findByNameAndDeletedAtIsNull(dto.getAway())).thenReturn(Optional.of(away));
-        when(placeRepository.findByNameAndDeletedAtIsNull(dto.getPlace())).thenReturn(Optional.empty());
+        when(teamRepository.findByIdAndDeletedAtIsNull(dto.getHomeId())).thenReturn(Optional.of(home));
+        when(teamRepository.findByIdAndDeletedAtIsNull(dto.getAwayId())).thenReturn(Optional.of(away));
+        when(placeRepository.findByIdAndDeletedAtIsNull(dto.getPlaceId())).thenReturn(Optional.empty());
         when(gameRepository.saveAndFlush(any())).thenReturn(game);
 
         WebApplicationException exception = Assertions.assertThrows(
@@ -324,9 +324,9 @@ class GameServiceTest {
     void givenGame_whenDelete_thenDeletesGame() {
         Long gameId = 1L;
         GameDTO dto = GameDTOFixture.get("baseball");
-        Team home = TeamFixture.get(dto.getHome());
-        Team away = TeamFixture.get(dto.getAway());
-        Place place = PlaceFixture.get(dto.getPlace());
+        Team home = TeamFixture.get(dto.getHomeId());
+        Team away = TeamFixture.get(dto.getAwayId());
+        Place place = PlaceFixture.get(dto.getPlaceId());
 
         Game game = Game.of(
                 GameType.fromString(dto.getType()),
@@ -338,9 +338,9 @@ class GameServiceTest {
         );
 
         when(gameRepository.findByIdAndDeletedAtIsNull(gameId)).thenReturn(Optional.of(game));
-        when(teamRepository.findByNameAndDeletedAtIsNull(dto.getHome())).thenReturn(Optional.of(home));
-        when(teamRepository.findByNameAndDeletedAtIsNull(dto.getAway())).thenReturn(Optional.of(away));
-        when(placeRepository.findByNameAndDeletedAtIsNull(dto.getPlace())).thenReturn(Optional.of(place));
+        when(teamRepository.findByIdAndDeletedAtIsNull(dto.getHomeId())).thenReturn(Optional.of(home));
+        when(teamRepository.findByIdAndDeletedAtIsNull(dto.getAwayId())).thenReturn(Optional.of(away));
+        when(placeRepository.findByIdAndDeletedAtIsNull(dto.getPlaceId())).thenReturn(Optional.of(place));
         when(gameRepository.saveAndFlush(any())).thenReturn(game);
 
         Assertions.assertDoesNotThrow(() -> sut.deleteGame(gameId));
@@ -364,9 +364,9 @@ class GameServiceTest {
     void givenGame_whenRestore_thenRestoresGame() {
         Long gameId = 1L;
         GameDTO dto = GameDTOFixture.get("baseball");
-        Team home = TeamFixture.get(dto.getHome());
-        Team away = TeamFixture.get(dto.getAway());
-        Place place = PlaceFixture.get(dto.getPlace());
+        Team home = TeamFixture.get(dto.getHomeId());
+        Team away = TeamFixture.get(dto.getAwayId());
+        Place place = PlaceFixture.get(dto.getPlaceId());
 
         Game game = Game.of(
                 GameType.fromString(dto.getType()),
@@ -378,9 +378,9 @@ class GameServiceTest {
         );
 
         when(gameRepository.findByIdAndDeletedAtIsNotNull(gameId)).thenReturn(Optional.of(game));
-        when(teamRepository.findByNameAndDeletedAtIsNull(dto.getHome())).thenReturn(Optional.of(home));
-        when(teamRepository.findByNameAndDeletedAtIsNull(dto.getAway())).thenReturn(Optional.of(away));
-        when(placeRepository.findByNameAndDeletedAtIsNull(dto.getPlace())).thenReturn(Optional.of(place));
+        when(teamRepository.findByIdAndDeletedAtIsNull(dto.getHomeId())).thenReturn(Optional.of(home));
+        when(teamRepository.findByIdAndDeletedAtIsNull(dto.getAwayId())).thenReturn(Optional.of(away));
+        when(placeRepository.findByIdAndDeletedAtIsNull(dto.getPlaceId())).thenReturn(Optional.of(place));
         when(gameRepository.saveAndFlush(any())).thenReturn(game);
 
         Assertions.assertDoesNotThrow(() -> sut.restoreGame(gameId));

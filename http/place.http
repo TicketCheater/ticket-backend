@@ -18,22 +18,22 @@ Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 {
-  "name": "광주기아챔피언스필드"
+  "name": "다저스타디움"
 }
 
 ### 장소 수정
-PATCH http://localhost:8001/web/places/update/1
+PATCH http://localhost:8001/web/places/update/10
 Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 {
-  "name": "사직야구장"
+  "name": "오라클파크"
 }
 
 ### 장소 삭제
-PATCH http://localhost:8001/web/places/delete/1
+PATCH http://localhost:8001/web/places/delete/10
 Authorization: Bearer {{accessToken}}
 
 ### 장소 복구
-PATCH http://localhost:8001/web/places/restore/1
+PATCH http://localhost:8001/web/places/restore/10
 Authorization: Bearer {{accessToken}}

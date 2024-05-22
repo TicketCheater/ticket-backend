@@ -20,9 +20,9 @@ Content-Type: application/json
 {
   "type": "baseball",
   "title": "한국시리즈 1차전",
-  "home": "기아타이거즈",
-  "away": "두산베어스",
-  "place": "광주-기아 챔피언스필드",
+  "home": 1,
+  "away": 2,
+  "place": 1,
   "startedAt": "2024-03-02T17:00:00"
 }
 
@@ -38,9 +38,9 @@ Content-Type: application/json
 {
   "type": "baseball",
   "title": "한국시리즈 1차전",
-  "home": "기아타이거즈",
-  "away": "두산베어스",
-  "place": "광주-기아 챔피언스필드",
+  "home": 1,
+  "away": 2,
+  "place": 1,
   "startedAt": "2024-03-02T17:00:00"
 }
 

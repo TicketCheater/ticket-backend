@@ -10,9 +10,9 @@ public class GameDTOFixture {
         return GameDTO.of(
                 type,
                 "title",
-                "home",
-                "away",
-                "place",
+                1L,
+                2L,
+                1L,
                 new Timestamp(System.currentTimeMillis())
         );
     }
