@@ -21,4 +21,11 @@ public class Grade extends BaseEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
+    public static Grade of(Place place, String name) {
+        Grade grade = new Grade();
+        grade.setPlace(place);
+        grade.setName(name);
+        return grade;
+    }
+
 }
