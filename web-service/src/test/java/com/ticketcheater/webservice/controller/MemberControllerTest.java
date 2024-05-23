@@ -77,7 +77,7 @@ class MemberControllerTest {
                 .andExpect(status().is(ErrorCode.MEMBER_ALREADY_EXISTS.getStatus().value()));
     }
 
-    @DisplayName("Invalid 한 PW 로 회원 가입 시 오류 발생")
+    @DisplayName("부적절한 비밀번호로 회원 가입 시 오류 발생")
     @Test
     void givenMemberWithInvalidPassword_whenSignup_thenThrowsError() throws Exception {
         String name = "name";
@@ -124,7 +124,7 @@ class MemberControllerTest {
                 .andExpect(status().is(ErrorCode.MEMBER_NOT_FOUND.getStatus().value()));
     }
 
-    @DisplayName("Invalid 한 PW 로 로그인 시 오류 발생")
+    @DisplayName("부적절한 비밀번호로 로그인 시 오류 발생")
     @Test
     void givenMemberWithInvalidPassword_whenLogin_thenThrowsError() throws Exception {
         String name = "name";
@@ -139,7 +139,7 @@ class MemberControllerTest {
                 .andExpect(status().is(ErrorCode.INVALID_PASSWORD.getStatus().value()));
     }
 
-    @DisplayName("올바른 PW 를 가진 회원 검증 시 참 반환")
+    @DisplayName("올바른 비밀번호를 가진 회원 검증 시 참 반환")
     @Test
     void givenMemberWithRightPassword_whenValidate_thenReturnsTrue() throws Exception {
         String token = "dummy";
@@ -158,7 +158,7 @@ class MemberControllerTest {
                 .andExpect(jsonPath("$.result.isValidate").value("true"));
     }
 
-    @DisplayName("틀린 PW 를 가진 회원 검증 시 거짓 반환")
+    @DisplayName("틀린 비밀번호를 가진 회원 검증 시 거짓 반환")
     @Test
     void givenMemberWithWrongPassword_whenValidate_thenReturnsFalse() throws Exception {
         String token = "dummy";
@@ -275,7 +275,7 @@ class MemberControllerTest {
                 .andExpect(status().is(ErrorCode.MEMBER_NOT_FOUND.getStatus().value()));
     }
 
-    @DisplayName("Invalid 한 PW 로 회원 수정 시 오류 발생")
+    @DisplayName("부적절한 비밀번호로 회원 수정 시 오류 발생")
     @Test
     void givenMemberWithInvalidPassword_whenUpdate_thenThrowsError() throws Exception {
         String token = "dummy";

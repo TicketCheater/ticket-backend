@@ -5,7 +5,6 @@ import com.ticketcheater.webservice.exception.ErrorCode;
 import com.ticketcheater.webservice.exception.WebApplicationException;
 import com.ticketcheater.webservice.fixture.PlaceFixture;
 import com.ticketcheater.webservice.repository.PlaceRepository;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +14,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.sql.Timestamp;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@DisplayName("비즈니스 로직 - 장소")
+@DisplayName("Business Logic - 장소")
 @SpringBootTest
 class PlaceServiceTest {
 
@@ -37,7 +37,7 @@ class PlaceServiceTest {
         when(placeRepository.save(any())).thenReturn(place);
         when(placeRepository.findByName(name)).thenReturn(Optional.empty());
 
-        Assertions.assertDoesNotThrow(() -> sut.createPlace(name));
+        assertDoesNotThrow(() -> sut.createPlace(name));
     }
 
     @DisplayName("이미 존재하는 장소 이름으로 생성 시 오류 발생")
@@ -48,11 +48,11 @@ class PlaceServiceTest {
 
         when(placeRepository.findByName(name)).thenReturn(Optional.of(place));
 
-        WebApplicationException exception = Assertions.assertThrows(
+        WebApplicationException exception = assertThrows(
                 WebApplicationException.class, () -> sut.createPlace(name)
         );
 
-        Assertions.assertEquals(ErrorCode.PLACE_ALREADY_EXISTS, exception.getCode());
+        assertEquals(ErrorCode.PLACE_ALREADY_EXISTS, exception.getCode());
     }
 
     @DisplayName("부적절한 장소 이름으로 생성 시 오류 발생")
@@ -60,11 +60,11 @@ class PlaceServiceTest {
     void givenInvalidPlace_whenCreate_thenThrowsError() {
         String name = "InvalidPlace";
 
-        WebApplicationException exception = Assertions.assertThrows(
+        WebApplicationException exception = assertThrows(
                 WebApplicationException.class, () -> sut.createPlace(name)
         );
 
-        Assertions.assertEquals(ErrorCode.INVALID_PLACE, exception.getCode());
+        assertEquals(ErrorCode.INVALID_PLACE, exception.getCode());
     }
 
     @DisplayName("장소 수정 정상 동작")
@@ -77,7 +77,7 @@ class PlaceServiceTest {
         when(placeRepository.findByIdAndDeletedAtIsNull(placeId)).thenReturn(Optional.of(place));
         when(placeRepository.saveAndFlush(any())).thenReturn(place);
 
-        Assertions.assertDoesNotThrow(() -> sut.updatePlace(placeId, name));
+        assertDoesNotThrow(() -> sut.updatePlace(placeId, name));
     }
 
     @DisplayName("없는 장소 수정 시 오류 발생")
@@ -88,11 +88,11 @@ class PlaceServiceTest {
 
         when(placeRepository.findByIdAndDeletedAtIsNull(placeId)).thenReturn(Optional.empty());
 
-        WebApplicationException exception = Assertions.assertThrows(
+        WebApplicationException exception = assertThrows(
                 WebApplicationException.class, () -> sut.updatePlace(placeId, name)
         );
 
-        Assertions.assertEquals(ErrorCode.PLACE_NOT_FOUND, exception.getCode());
+        assertEquals(ErrorCode.PLACE_NOT_FOUND, exception.getCode());
     }
 
     @DisplayName("부적절한 장소 이름으로 수정 시 오류 발생")
@@ -105,11 +105,11 @@ class PlaceServiceTest {
 
         when(placeRepository.findByIdAndDeletedAtIsNull(placeId)).thenReturn(Optional.of(place));
 
-        WebApplicationException exception = Assertions.assertThrows(
+        WebApplicationException exception = assertThrows(
                 WebApplicationException.class, () -> sut.updatePlace(placeId, name)
         );
 
-        Assertions.assertEquals(ErrorCode.INVALID_PLACE, exception.getCode());
+        assertEquals(ErrorCode.INVALID_PLACE, exception.getCode());
     }
 
     @DisplayName("장소 삭제 정상 동작")
@@ -121,7 +121,7 @@ class PlaceServiceTest {
         when(placeRepository.findByIdAndDeletedAtIsNull(placeId)).thenReturn(Optional.of(place));
         when(placeRepository.saveAndFlush(any())).thenReturn(place);
 
-        Assertions.assertDoesNotThrow(() -> sut.deletePlace(placeId));
+        assertDoesNotThrow(() -> sut.deletePlace(placeId));
     }
 
     @DisplayName("없는 장소 삭제 시 오류 발생")
@@ -131,11 +131,11 @@ class PlaceServiceTest {
 
         when(placeRepository.findByIdAndDeletedAtIsNull(placeId)).thenReturn(Optional.empty());
 
-        WebApplicationException exception = Assertions.assertThrows(
+        WebApplicationException exception = assertThrows(
                 WebApplicationException.class, () -> sut.deletePlace(placeId)
         );
 
-        Assertions.assertEquals(ErrorCode.PLACE_NOT_FOUND, exception.getCode());
+        assertEquals(ErrorCode.PLACE_NOT_FOUND, exception.getCode());
     }
 
     @DisplayName("장소 복구 정상 동작")
@@ -148,7 +148,7 @@ class PlaceServiceTest {
         when(placeRepository.findByIdAndDeletedAtIsNotNull(placeId)).thenReturn(Optional.of(place));
         when(placeRepository.saveAndFlush(any())).thenReturn(place);
 
-        Assertions.assertDoesNotThrow(() -> sut.restorePlace(placeId));
+        assertDoesNotThrow(() -> sut.restorePlace(placeId));
     }
 
     @DisplayName("있는 장소 복구 시 오류 발생")
@@ -158,11 +158,11 @@ class PlaceServiceTest {
 
         when(placeRepository.findByIdAndDeletedAtIsNotNull(placeId)).thenReturn(Optional.empty());
 
-        WebApplicationException exception = Assertions.assertThrows(
+        WebApplicationException exception = assertThrows(
                 WebApplicationException.class, () -> sut.restorePlace(placeId)
         );
 
-        Assertions.assertEquals(ErrorCode.PLACE_ALREADY_EXISTS, exception.getCode());
+        assertEquals(ErrorCode.PLACE_ALREADY_EXISTS, exception.getCode());
     }
 
 }

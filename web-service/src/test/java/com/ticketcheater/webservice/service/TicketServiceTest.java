@@ -8,7 +8,6 @@ import com.ticketcheater.webservice.fixture.GameFixture;
 import com.ticketcheater.webservice.fixture.GradeFixture;
 import com.ticketcheater.webservice.repository.GameRepository;
 import com.ticketcheater.webservice.repository.GradeRepository;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +17,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @DisplayName("Business Logic - 티켓")
@@ -50,7 +50,7 @@ class TicketServiceTest {
         when(gameRepository.findByIdAndDeletedAtIsNull(gameId)).thenReturn(Optional.of(game));
         when(gradeRepository.findByIdAndDeletedAtIsNull(gradeId)).thenReturn(Optional.of(grade));
 
-        Assertions.assertDoesNotThrow(() -> sut.createTickets(gameId, gradeId, quantity, price));
+        assertDoesNotThrow(() -> sut.createTickets(gameId, gradeId, quantity, price));
 
         verify(jdbcTemplate, times((quantity+999)/1000))
                 .batchUpdate(
@@ -73,11 +73,11 @@ class TicketServiceTest {
         when(gameRepository.findByIdAndDeletedAtIsNull(gameId)).thenReturn(Optional.of(game));
         when(gradeRepository.findByIdAndDeletedAtIsNull(gradeId)).thenReturn(Optional.of(grade));
 
-        WebApplicationException exception = Assertions.assertThrows(
+        WebApplicationException exception = assertThrows(
                 WebApplicationException.class, () -> sut.createTickets(gameId, gradeId, quantity, price)
         );
 
-        Assertions.assertEquals(ErrorCode.INVALID_TICKET_QUANTITY, exception.getCode());
+        assertEquals(ErrorCode.INVALID_TICKET_QUANTITY, exception.getCode());
     }
 
     @DisplayName("부적절한 가격으로 생성 시 정상 동작")
@@ -94,11 +94,11 @@ class TicketServiceTest {
         when(gameRepository.findByIdAndDeletedAtIsNull(gameId)).thenReturn(Optional.of(game));
         when(gradeRepository.findByIdAndDeletedAtIsNull(gradeId)).thenReturn(Optional.of(grade));
 
-        WebApplicationException exception = Assertions.assertThrows(
+        WebApplicationException exception = assertThrows(
                 WebApplicationException.class, () -> sut.createTickets(gameId, gradeId, quantity, price)
         );
 
-        Assertions.assertEquals(ErrorCode.INVALID_TICKET_PRICE, exception.getCode());
+        assertEquals(ErrorCode.INVALID_TICKET_PRICE, exception.getCode());
     }
 
     @DisplayName("없는 게임의 티켓 생성 시 오류 발생")
@@ -114,11 +114,11 @@ class TicketServiceTest {
         when(gameRepository.findByIdAndDeletedAtIsNull(gameId)).thenReturn(Optional.empty());
         when(gradeRepository.findByIdAndDeletedAtIsNull(gradeId)).thenReturn(Optional.of(grade));
 
-        WebApplicationException exception = Assertions.assertThrows(
+        WebApplicationException exception = assertThrows(
                 WebApplicationException.class, () -> sut.createTickets(gameId, gradeId, quantity, price)
         );
 
-        Assertions.assertEquals(ErrorCode.GAME_NOT_FOUND, exception.getCode());
+        assertEquals(ErrorCode.GAME_NOT_FOUND, exception.getCode());
     }
 
     @DisplayName("없는 등급의 티켓 생성 시 오류 발생")
@@ -134,11 +134,11 @@ class TicketServiceTest {
         when(gameRepository.findByIdAndDeletedAtIsNull(gameId)).thenReturn(Optional.of(game));
         when(gradeRepository.findByIdAndDeletedAtIsNull(gradeId)).thenReturn(Optional.empty());
 
-        WebApplicationException exception = Assertions.assertThrows(
+        WebApplicationException exception = assertThrows(
                 WebApplicationException.class, () -> sut.createTickets(gameId, gradeId, quantity, price)
         );
 
-        Assertions.assertEquals(ErrorCode.GRADE_NOT_FOUND, exception.getCode());
+        assertEquals(ErrorCode.GRADE_NOT_FOUND, exception.getCode());
     }
 
 }

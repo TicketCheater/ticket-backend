@@ -5,7 +5,6 @@ import com.ticketcheater.webservice.exception.ErrorCode;
 import com.ticketcheater.webservice.exception.WebApplicationException;
 import com.ticketcheater.webservice.fixture.TeamFixture;
 import com.ticketcheater.webservice.repository.TeamRepository;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +14,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.sql.Timestamp;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -37,7 +37,7 @@ class TeamServiceTest {
         when(teamRepository.save(any())).thenReturn(team);
         when(teamRepository.findByName(name)).thenReturn(Optional.empty());
 
-        Assertions.assertDoesNotThrow(() -> sut.createTeam(name));
+        assertDoesNotThrow(() -> sut.createTeam(name));
     }
 
     @DisplayName("이미 존재하는 팀 이름으로 생성 시 오류 발생")
@@ -48,11 +48,11 @@ class TeamServiceTest {
 
         when(teamRepository.findByName(name)).thenReturn(Optional.of(team));
 
-        WebApplicationException exception = Assertions.assertThrows(
+        WebApplicationException exception = assertThrows(
                 WebApplicationException.class, () -> sut.createTeam(name)
         );
 
-        Assertions.assertEquals(ErrorCode.TEAM_ALREADY_EXISTS, exception.getCode());
+        assertEquals(ErrorCode.TEAM_ALREADY_EXISTS, exception.getCode());
     }
 
     @DisplayName("부적절한 팀 이름으로 생성 시 오류 발생")
@@ -60,11 +60,11 @@ class TeamServiceTest {
     void givenInvalidTeam_whenCreate_thenThrowsError() {
         String name = "KIATigers";
 
-        WebApplicationException exception = Assertions.assertThrows(
+        WebApplicationException exception = assertThrows(
                 WebApplicationException.class, () -> sut.createTeam(name)
         );
 
-        Assertions.assertEquals(ErrorCode.INVALID_TEAM, exception.getCode());
+        assertEquals(ErrorCode.INVALID_TEAM, exception.getCode());
     }
 
     @DisplayName("팀 수정 정상 동작")
@@ -77,7 +77,7 @@ class TeamServiceTest {
         when(teamRepository.findByIdAndDeletedAtIsNull(teamId)).thenReturn(Optional.of(team));
         when(teamRepository.saveAndFlush(any())).thenReturn(team);
 
-        Assertions.assertDoesNotThrow(() -> sut.updateTeam(teamId, name));
+        assertDoesNotThrow(() -> sut.updateTeam(teamId, name));
     }
 
     @DisplayName("없는 팀 수정 시 오류 발생")
@@ -88,11 +88,11 @@ class TeamServiceTest {
 
         when(teamRepository.findByIdAndDeletedAtIsNull(teamId)).thenReturn(Optional.empty());
 
-        WebApplicationException exception = Assertions.assertThrows(
+        WebApplicationException exception = assertThrows(
                 WebApplicationException.class, () -> sut.updateTeam(teamId, name)
         );
 
-        Assertions.assertEquals(ErrorCode.TEAM_NOT_FOUND, exception.getCode());
+        assertEquals(ErrorCode.TEAM_NOT_FOUND, exception.getCode());
     }
 
     @DisplayName("부적절한 팀 이름으로 수정 시 오류 발생")
@@ -105,11 +105,11 @@ class TeamServiceTest {
 
         when(teamRepository.findByIdAndDeletedAtIsNull(teamId)).thenReturn(Optional.of(team));
 
-        WebApplicationException exception = Assertions.assertThrows(
+        WebApplicationException exception = assertThrows(
                 WebApplicationException.class, () -> sut.updateTeam(teamId, name)
         );
 
-        Assertions.assertEquals(ErrorCode.INVALID_TEAM, exception.getCode());
+        assertEquals(ErrorCode.INVALID_TEAM, exception.getCode());
     }
 
     @DisplayName("팀 삭제 정상 동작")
@@ -121,7 +121,7 @@ class TeamServiceTest {
         when(teamRepository.findByIdAndDeletedAtIsNull(teamId)).thenReturn(Optional.of(team));
         when(teamRepository.saveAndFlush(any())).thenReturn(team);
 
-        Assertions.assertDoesNotThrow(() -> sut.deleteTeam(teamId));
+        assertDoesNotThrow(() -> sut.deleteTeam(teamId));
     }
 
     @DisplayName("없는 팀 삭제 시 오류 발생")
@@ -131,11 +131,11 @@ class TeamServiceTest {
 
         when(teamRepository.findByIdAndDeletedAtIsNull(teamId)).thenReturn(Optional.empty());
 
-        WebApplicationException exception = Assertions.assertThrows(
+        WebApplicationException exception = assertThrows(
                 WebApplicationException.class, () -> sut.deleteTeam(teamId)
         );
 
-        Assertions.assertEquals(ErrorCode.TEAM_NOT_FOUND, exception.getCode());
+        assertEquals(ErrorCode.TEAM_NOT_FOUND, exception.getCode());
     }
 
     @DisplayName("팀 복구 정상 동작")
@@ -148,7 +148,7 @@ class TeamServiceTest {
         when(teamRepository.findByIdAndDeletedAtIsNotNull(teamId)).thenReturn(Optional.of(team));
         when(teamRepository.saveAndFlush(any())).thenReturn(team);
 
-        Assertions.assertDoesNotThrow(() -> sut.restoreTeam(teamId));
+        assertDoesNotThrow(() -> sut.restoreTeam(teamId));
     }
 
     @DisplayName("있는 팀 복구 시 오류 발생")
@@ -158,11 +158,11 @@ class TeamServiceTest {
 
         when(teamRepository.findByIdAndDeletedAtIsNotNull(teamId)).thenReturn(Optional.empty());
 
-        WebApplicationException exception = Assertions.assertThrows(
+        WebApplicationException exception = assertThrows(
                 WebApplicationException.class, () -> sut.restoreTeam(teamId)
         );
 
-        Assertions.assertEquals(ErrorCode.TEAM_ALREADY_EXISTS, exception.getCode());
+        assertEquals(ErrorCode.TEAM_ALREADY_EXISTS, exception.getCode());
     }
 
 }

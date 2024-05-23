@@ -17,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -52,7 +53,7 @@ class MemberServiceTest {
                         nickname
                 ));
 
-        Assertions.assertDoesNotThrow(() -> sut.signup(name, password, email, nickname));
+        assertDoesNotThrow(() -> sut.signup(name, password, email, nickname));
     }
 
     @DisplayName("중복된 회원 정보로 회원 가입 시 오류 발생")
@@ -65,14 +66,15 @@ class MemberServiceTest {
 
         when(memberRepository.findByName(name))
                 .thenReturn(Optional.of(MemberFixture.get(name, password, email, nickname)));
-        WebApplicationException exception = Assertions.assertThrows(
+
+        WebApplicationException exception = assertThrows(
                 WebApplicationException.class, () -> sut.signup(name, password, email, nickname)
         );
 
-        Assertions.assertEquals(ErrorCode.MEMBER_ALREADY_EXISTS, exception.getCode());
+        assertEquals(ErrorCode.MEMBER_ALREADY_EXISTS, exception.getCode());
     }
 
-    @DisplayName("Invalid 한 PW 로 회원 가입 시 오류 발생")
+    @DisplayName("부적절한 비밀번호로 회원 가입 시 오류 발생")
     @Test
     void givenMemberWithInvalidPassword_whenSignup_thenThrowsError() {
         String name = "name";
@@ -81,11 +83,12 @@ class MemberServiceTest {
         String nickname = "nickname";
 
         when(memberRepository.findByName(name)).thenReturn(Optional.empty());
-        WebApplicationException exception = Assertions.assertThrows(
+
+        WebApplicationException exception = assertThrows(
                 WebApplicationException.class, () -> sut.signup(name, password, email, nickname)
         );
 
-        Assertions.assertEquals(ErrorCode.INVALID_PASSWORD, exception.getCode());
+        assertEquals(ErrorCode.INVALID_PASSWORD, exception.getCode());
     }
 
     @DisplayName("로그인 정상 동작")
@@ -96,11 +99,11 @@ class MemberServiceTest {
         String email = "email";
         String nickname = "nickname";
 
-        when(memberRepository.findByName(name))
+        when(memberRepository.findByNameAndDeletedAtIsNull(name))
                 .thenReturn(Optional.of(MemberFixture.get(name, password, email, nickname)));
         when(encoder.matches(password, "!password12")).thenReturn(true);
 
-        Assertions.assertDoesNotThrow(() -> sut.login(name, password));
+        assertDoesNotThrow(() -> sut.login(name, password));
     }
 
     @DisplayName("없는 회원 로그인 시 오류 발생")
@@ -109,15 +112,16 @@ class MemberServiceTest {
         String name = "name";
         String password = "!password12";
 
-        when(memberRepository.findByName(name)).thenReturn(Optional.empty());
-        WebApplicationException exception = Assertions.assertThrows(
+        when(memberRepository.findByNameAndDeletedAtIsNull(name)).thenReturn(Optional.empty());
+
+        WebApplicationException exception = assertThrows(
                 WebApplicationException.class, () -> sut.login(name, password)
         );
 
-        Assertions.assertEquals(ErrorCode.MEMBER_NOT_FOUND, exception.getCode());
+        assertEquals(ErrorCode.MEMBER_NOT_FOUND, exception.getCode());
     }
 
-    @DisplayName("Invalid 한 PW 로 로그인 시 오류 발생")
+    @DisplayName("부적절한 비밀번호로 로그인 시 오류 발생")
     @Test
     void givenMemberWithInvalidPassword_whenLogin_thenThrowsError() {
         String name = "name";
@@ -125,17 +129,18 @@ class MemberServiceTest {
         String email = "email";
         String nickname = "nickname";
 
-        when(memberRepository.findByName(name))
+        when(memberRepository.findByNameAndDeletedAtIsNull(name))
                 .thenReturn(Optional.of(MemberFixture.get(name, password, email, nickname)));
         when(encoder.matches(password, "!password12")).thenReturn(false);
-        WebApplicationException exception = Assertions.assertThrows(
+
+        WebApplicationException exception = assertThrows(
                 WebApplicationException.class, () -> sut.login(name, password)
         );
 
-        Assertions.assertEquals(ErrorCode.INVALID_PASSWORD, exception.getCode());
+        assertEquals(ErrorCode.INVALID_PASSWORD, exception.getCode());
     }
 
-    @DisplayName("올바른 PW 를 가진 회원 검증 시 참 반환")
+    @DisplayName("올바른 비밀번호를 가진 회원 검증 시 참 반환")
     @Test
     void givenMemberWithRightPassword_whenValidate_thenReturnsTrue()
      {
@@ -152,7 +157,7 @@ class MemberServiceTest {
         Assertions.assertTrue(sut.validateMember(name, requestPassword));
     }
 
-    @DisplayName("틀린 PW 를 가진 회원 검증 시 거짓 반환")
+    @DisplayName("틀린 비밀번호를 가진 회원 검증 시 거짓 반환")
     @Test
     void givenMemberWithWrongPassword_whenValidate_thenReturnsFalse() {
         String name = "name";
@@ -175,11 +180,12 @@ class MemberServiceTest {
         String requestPassword = "!password12";
 
         when(memberRepository.findByNameAndDeletedAtIsNull(name)).thenReturn(Optional.empty());
-        WebApplicationException exception = Assertions.assertThrows(
+
+        WebApplicationException exception = assertThrows(
                 WebApplicationException.class, () -> sut.validateMember(name, requestPassword)
         );
 
-        Assertions.assertEquals(ErrorCode.MEMBER_NOT_FOUND, exception.getCode());
+        assertEquals(ErrorCode.MEMBER_NOT_FOUND, exception.getCode());
     }
 
     @DisplayName("회원 수정 정상 동작")
@@ -201,7 +207,7 @@ class MemberServiceTest {
                         nickname
                 ));
 
-        Assertions.assertDoesNotThrow(() -> sut.updateMember(name, password, nickname));
+        assertDoesNotThrow(() -> sut.updateMember(name, password, nickname));
     }
 
     @DisplayName("없는 회원 수정 시 오류 발생")
@@ -212,14 +218,15 @@ class MemberServiceTest {
         String nickname = "nickname";
 
         when(memberRepository.findByNameAndDeletedAtIsNull(name)).thenReturn(Optional.empty());
-        WebApplicationException exception = Assertions.assertThrows(
+
+        WebApplicationException exception = assertThrows(
                 WebApplicationException.class, () -> sut.updateMember(name, password, nickname)
         );
 
-        Assertions.assertEquals(ErrorCode.MEMBER_NOT_FOUND, exception.getCode());
+        assertEquals(ErrorCode.MEMBER_NOT_FOUND, exception.getCode());
     }
 
-    @DisplayName("Invalid 한 PW 로 회원 수정 시 오류 발생")
+    @DisplayName("부적절한 비밀번호로 회원 수정 시 오류 발생")
     @Test
     void givenMemberWithInvalidPassword_whenUpdate_thenThrowsError() {
         String name = "name";
@@ -229,11 +236,12 @@ class MemberServiceTest {
 
         when(memberRepository.findByNameAndDeletedAtIsNull(name))
                 .thenReturn(Optional.of(MemberFixture.get(name, password, email, nickname)));
-        WebApplicationException exception = Assertions.assertThrows(
+
+        WebApplicationException exception = assertThrows(
                 WebApplicationException.class, () -> sut.updateMember(name, password, nickname)
         );
 
-        Assertions.assertEquals(ErrorCode.INVALID_PASSWORD, exception.getCode());
+        assertEquals(ErrorCode.INVALID_PASSWORD, exception.getCode());
     }
 
     @DisplayName("회원 삭제 정상 동작")
@@ -254,7 +262,7 @@ class MemberServiceTest {
                         nickname
                 ));
 
-        Assertions.assertDoesNotThrow(() -> sut.deleteMember(name));
+        assertDoesNotThrow(() -> sut.deleteMember(name));
     }
 
     @DisplayName("없는 회원 삭제 시 오류 발생")
@@ -264,11 +272,12 @@ class MemberServiceTest {
 
         when(memberRepository.findByNameAndDeletedAtIsNull(name))
                 .thenReturn(Optional.empty());
-        WebApplicationException exception = Assertions.assertThrows(
+
+        WebApplicationException exception = assertThrows(
                 WebApplicationException.class, () -> sut.deleteMember(name)
         );
 
-        Assertions.assertEquals(ErrorCode.MEMBER_NOT_FOUND, exception.getCode());
+        assertEquals(ErrorCode.MEMBER_NOT_FOUND, exception.getCode());
     }
 
     @DisplayName("관리자 회원 검증 시 성공")
@@ -280,7 +289,7 @@ class MemberServiceTest {
         when(memberRepository.findByNameAndDeletedAtIsNull(name))
                 .thenReturn(Optional.of(MemberFixture.get(role)));
 
-        Assertions.assertDoesNotThrow(() -> sut.isAdmin(name));
+        assertDoesNotThrow(() -> sut.isAdmin(name));
     }
 
     @DisplayName("일반 회원 검증 시 오류 발생")
@@ -291,11 +300,12 @@ class MemberServiceTest {
 
         when(memberRepository.findByNameAndDeletedAtIsNull(name))
                 .thenReturn(Optional.of(MemberFixture.get(role)));
-        WebApplicationException exception = Assertions.assertThrows(
+
+        WebApplicationException exception = assertThrows(
                 WebApplicationException.class, () -> sut.isAdmin(name)
         );
 
-        Assertions.assertEquals(ErrorCode.INVALID_TOKEN, exception.getCode());
+        assertEquals(ErrorCode.INVALID_TOKEN, exception.getCode());
     }
 
     @DisplayName("없는 회원 검증 시 오류 발생")
@@ -305,11 +315,12 @@ class MemberServiceTest {
 
         when(memberRepository.findByNameAndDeletedAtIsNull(name))
                 .thenReturn(Optional.empty());
-        WebApplicationException exception = Assertions.assertThrows(
+
+        WebApplicationException exception = assertThrows(
                 WebApplicationException.class, () -> sut.isAdmin(name)
         );
 
-        Assertions.assertEquals(ErrorCode.MEMBER_NOT_FOUND, exception.getCode());
+        assertEquals(ErrorCode.MEMBER_NOT_FOUND, exception.getCode());
     }
 
 }

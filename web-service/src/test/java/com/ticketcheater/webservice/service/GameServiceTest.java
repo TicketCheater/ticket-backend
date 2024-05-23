@@ -13,7 +13,6 @@ import com.ticketcheater.webservice.fixture.TeamFixture;
 import com.ticketcheater.webservice.repository.GameRepository;
 import com.ticketcheater.webservice.repository.PlaceRepository;
 import com.ticketcheater.webservice.repository.TeamRepository;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +22,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -64,7 +64,7 @@ class GameServiceTest {
         when(teamRepository.findByIdAndDeletedAtIsNull(dto.getAwayId())).thenReturn(Optional.of(away));
         when(placeRepository.findByIdAndDeletedAtIsNull(dto.getPlaceId())).thenReturn(Optional.of(place));
 
-        Assertions.assertDoesNotThrow(() -> sut.createGame(dto));
+        assertDoesNotThrow(() -> sut.createGame(dto));
     }
 
     @DisplayName("타입이 부적절한 게임 생성 시 오류 발생")
@@ -72,11 +72,11 @@ class GameServiceTest {
     void givenGameWithInvalidType_whenCreate_thenThrowsError() {
         GameDTO dto = GameDTOFixture.get("wrong");
 
-        WebApplicationException exception = Assertions.assertThrows(
+        WebApplicationException exception = assertThrows(
                 WebApplicationException.class, () -> sut.createGame(dto)
         );
 
-        Assertions.assertEquals(ErrorCode.GAME_TYPE_NOT_FOUND, exception.getCode());
+        assertEquals(ErrorCode.GAME_TYPE_NOT_FOUND, exception.getCode());
     }
 
     @DisplayName("홈 팀이 부적절한 게임 생성 시 오류 발생")
@@ -100,11 +100,11 @@ class GameServiceTest {
         when(teamRepository.findByIdAndDeletedAtIsNull(dto.getAwayId())).thenReturn(Optional.of(away));
         when(placeRepository.findByIdAndDeletedAtIsNull(dto.getPlaceId())).thenReturn(Optional.of(place));
 
-        WebApplicationException exception = Assertions.assertThrows(
+        WebApplicationException exception = assertThrows(
                 WebApplicationException.class, () -> sut.createGame(dto)
         );
 
-        Assertions.assertEquals(ErrorCode.TEAM_NOT_FOUND, exception.getCode());
+        assertEquals(ErrorCode.TEAM_NOT_FOUND, exception.getCode());
     }
 
     @DisplayName("원정 팀이 부적절한 게임 생성 시 오류 발생")
@@ -128,11 +128,11 @@ class GameServiceTest {
         when(teamRepository.findByIdAndDeletedAtIsNull(dto.getAwayId())).thenReturn(Optional.empty());
         when(placeRepository.findByIdAndDeletedAtIsNull(dto.getPlaceId())).thenReturn(Optional.of(place));
 
-        WebApplicationException exception = Assertions.assertThrows(
+        WebApplicationException exception = assertThrows(
                 WebApplicationException.class, () -> sut.createGame(dto)
         );
 
-        Assertions.assertEquals(ErrorCode.TEAM_NOT_FOUND, exception.getCode());
+        assertEquals(ErrorCode.TEAM_NOT_FOUND, exception.getCode());
     }
 
     @DisplayName("장소가 부적절한 게임 생성 시 오류 발생")
@@ -156,11 +156,11 @@ class GameServiceTest {
         when(teamRepository.findByIdAndDeletedAtIsNull(dto.getAwayId())).thenReturn(Optional.of(away));
         when(placeRepository.findByIdAndDeletedAtIsNull(dto.getPlaceId())).thenReturn(Optional.empty());
 
-        WebApplicationException exception = Assertions.assertThrows(
+        WebApplicationException exception = assertThrows(
                 WebApplicationException.class, () -> sut.createGame(dto)
         );
 
-        Assertions.assertEquals(ErrorCode.PLACE_NOT_FOUND, exception.getCode());
+        assertEquals(ErrorCode.PLACE_NOT_FOUND, exception.getCode());
     }
 
     @DisplayName("게임 조회 정상 동작")
@@ -172,7 +172,7 @@ class GameServiceTest {
         when(teamRepository.findByIdAndDeletedAtIsNull(teamId)).thenReturn(Optional.of(home));
         when(gameRepository.findByHomeAndDeletedAtIsNull(home)).thenReturn(List.of());
 
-        Assertions.assertDoesNotThrow(() -> sut.getGamesByHome(teamId));
+        assertDoesNotThrow(() -> sut.getGamesByHome(teamId));
     }
 
     @DisplayName("없는 팀의 게임 조회 시 오류 발생")
@@ -182,10 +182,11 @@ class GameServiceTest {
 
         when(teamRepository.findByIdAndDeletedAtIsNull(teamId)).thenReturn(Optional.empty());
 
-        WebApplicationException exception = Assertions.assertThrows(
+        WebApplicationException exception = assertThrows(
                 WebApplicationException.class, () -> sut.getGamesByHome(teamId)
         );
-        Assertions.assertEquals(ErrorCode.TEAM_NOT_FOUND, exception.getCode());
+
+        assertEquals(ErrorCode.TEAM_NOT_FOUND, exception.getCode());
     }
 
     @DisplayName("게임 수정 정상 동작")
@@ -212,7 +213,7 @@ class GameServiceTest {
         when(placeRepository.findByIdAndDeletedAtIsNull(dto.getPlaceId())).thenReturn(Optional.of(place));
         when(gameRepository.saveAndFlush(any())).thenReturn(game);
 
-        Assertions.assertDoesNotThrow(() -> sut.updateGame(gameId, dto));
+        assertDoesNotThrow(() -> sut.updateGame(gameId, dto));
     }
 
     @DisplayName("없는 게임 수정 시 오류 발생")
@@ -222,11 +223,12 @@ class GameServiceTest {
         GameDTO dto = GameDTOFixture.get("baseball");
 
         when(gameRepository.findByIdAndDeletedAtIsNull(gameId)).thenReturn(Optional.empty());
-        WebApplicationException exception = Assertions.assertThrows(
+
+        WebApplicationException exception = assertThrows(
                 WebApplicationException.class, () -> sut.updateGame(gameId, dto)
         );
 
-        Assertions.assertEquals(ErrorCode.GAME_NOT_FOUND, exception.getCode());
+        assertEquals(ErrorCode.GAME_NOT_FOUND, exception.getCode());
     }
 
     @DisplayName("홈 팀이 부적절한 게임 수정 시 오류 발생")
@@ -252,11 +254,11 @@ class GameServiceTest {
         when(placeRepository.findByIdAndDeletedAtIsNull(dto.getPlaceId())).thenReturn(Optional.of(place));
         when(gameRepository.saveAndFlush(any())).thenReturn(game);
 
-        WebApplicationException exception = Assertions.assertThrows(
+        WebApplicationException exception = assertThrows(
                 WebApplicationException.class, () -> sut.updateGame(gameId, dto)
         );
 
-        Assertions.assertEquals(ErrorCode.TEAM_NOT_FOUND, exception.getCode());
+        assertEquals(ErrorCode.TEAM_NOT_FOUND, exception.getCode());
     }
 
     @DisplayName("원정 팀이 부적절한 게임 수정 시 오류 발생")
@@ -282,11 +284,11 @@ class GameServiceTest {
         when(placeRepository.findByIdAndDeletedAtIsNull(dto.getPlaceId())).thenReturn(Optional.of(place));
         when(gameRepository.saveAndFlush(any())).thenReturn(game);
 
-        WebApplicationException exception = Assertions.assertThrows(
+        WebApplicationException exception = assertThrows(
                 WebApplicationException.class, () -> sut.updateGame(gameId, dto)
         );
 
-        Assertions.assertEquals(ErrorCode.TEAM_NOT_FOUND, exception.getCode());
+        assertEquals(ErrorCode.TEAM_NOT_FOUND, exception.getCode());
     }
 
     @DisplayName("장소가 부적절한 게임 수정 시 오류 발생")
@@ -312,11 +314,11 @@ class GameServiceTest {
         when(placeRepository.findByIdAndDeletedAtIsNull(dto.getPlaceId())).thenReturn(Optional.empty());
         when(gameRepository.saveAndFlush(any())).thenReturn(game);
 
-        WebApplicationException exception = Assertions.assertThrows(
+        WebApplicationException exception = assertThrows(
                 WebApplicationException.class, () -> sut.updateGame(gameId, dto)
         );
 
-        Assertions.assertEquals(ErrorCode.PLACE_NOT_FOUND, exception.getCode());
+        assertEquals(ErrorCode.PLACE_NOT_FOUND, exception.getCode());
     }
 
     @DisplayName("게임 삭제 정상 동작")
@@ -343,7 +345,7 @@ class GameServiceTest {
         when(placeRepository.findByIdAndDeletedAtIsNull(dto.getPlaceId())).thenReturn(Optional.of(place));
         when(gameRepository.saveAndFlush(any())).thenReturn(game);
 
-        Assertions.assertDoesNotThrow(() -> sut.deleteGame(gameId));
+        assertDoesNotThrow(() -> sut.deleteGame(gameId));
     }
 
     @DisplayName("없는 게임 삭제 시 오류 발생")
@@ -352,11 +354,12 @@ class GameServiceTest {
         Long gameId = 1L;
 
         when(gameRepository.findByIdAndDeletedAtIsNull(gameId)).thenReturn(Optional.empty());
-        WebApplicationException exception = Assertions.assertThrows(
+
+        WebApplicationException exception = assertThrows(
                 WebApplicationException.class, () -> sut.deleteGame(gameId)
         );
 
-        Assertions.assertEquals(ErrorCode.GAME_NOT_FOUND, exception.getCode());
+        assertEquals(ErrorCode.GAME_NOT_FOUND, exception.getCode());
     }
 
     @DisplayName("게임 복구 정상 동작")
@@ -383,7 +386,7 @@ class GameServiceTest {
         when(placeRepository.findByIdAndDeletedAtIsNull(dto.getPlaceId())).thenReturn(Optional.of(place));
         when(gameRepository.saveAndFlush(any())).thenReturn(game);
 
-        Assertions.assertDoesNotThrow(() -> sut.restoreGame(gameId));
+        assertDoesNotThrow(() -> sut.restoreGame(gameId));
     }
 
     @DisplayName("존재하는 게임 삭제 시 오류 발생")
@@ -392,11 +395,12 @@ class GameServiceTest {
         Long gameId = 1L;
 
         when(gameRepository.findByIdAndDeletedAtIsNotNull(gameId)).thenReturn(Optional.empty());
-        WebApplicationException exception = Assertions.assertThrows(
+
+        WebApplicationException exception = assertThrows(
                 WebApplicationException.class, () -> sut.restoreGame(gameId)
         );
 
-        Assertions.assertEquals(ErrorCode.GAME_ALREADY_EXISTS, exception.getCode());
+        assertEquals(ErrorCode.GAME_ALREADY_EXISTS, exception.getCode());
     }
 
 }
