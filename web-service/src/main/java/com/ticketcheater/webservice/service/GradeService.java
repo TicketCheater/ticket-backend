@@ -24,11 +24,12 @@ public class GradeService {
 
     @Transactional
     public GradeDTO createGrade(Long placeId, String name) {
-        gradeRepository.findByPlaceIdAndName(placeId, name).ifPresent(it -> {
+        Place place = findPlaceById(placeId);
+
+        gradeRepository.findByPlaceAndName(place, name).ifPresent(it -> {
             throw new WebApplicationException(ErrorCode.GRADE_ALREADY_EXISTS, String.format("grade with name %s already exists", name));
         });
 
-        Place place = findPlaceById(placeId);
         Grade grade = gradeRepository.save(Grade.of(place, name));
 
         log.info("create grade method executed successfully for grade: grade id={}", grade.getId());

@@ -10,7 +10,7 @@ import lombok.Setter;
         @Index(name = "idx_place_id_deletedAt", columnList = "id, deleted_at"),
         @Index(name = "idx_place_name", columnList = "name", unique = true),
 })
-@Entity
+@Entity(name = "place")
 public class Place extends BaseEntity {
 
     @Id

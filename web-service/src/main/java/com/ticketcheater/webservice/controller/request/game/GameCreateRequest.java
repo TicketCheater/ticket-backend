@@ -3,10 +3,12 @@ package com.ticketcheater.webservice.controller.request.game;
 import com.ticketcheater.webservice.dto.GameDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor
 public class GameCreateRequest {
     private String type;
