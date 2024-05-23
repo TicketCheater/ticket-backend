@@ -30,6 +30,9 @@ public enum ErrorCode {
 
     GRADE_NOT_FOUND(HttpStatus.NOT_FOUND, "Grade not found"),
     GRADE_ALREADY_EXISTS(HttpStatus.CONFLICT, "Grade already exists"),
+
+    INVALID_TICKET_QUANTITY(HttpStatus.FORBIDDEN, "Invalid ticket quantity"),
+    INVALID_TICKET_PRICE(HttpStatus.FORBIDDEN, "Invalid ticket price"),
     ;
 
     private final HttpStatus status;
