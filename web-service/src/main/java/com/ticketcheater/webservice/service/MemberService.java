@@ -44,7 +44,7 @@ public class MemberService {
     }
 
     public TokenDTO login(String name, String password) {
-        MemberDTO member = memberRepository.findByName(name).map(MemberDTO::toDTO).orElseThrow(
+        MemberDTO member = memberRepository.findByNameAndDeletedAtIsNull(name).map(MemberDTO::toDTO).orElseThrow(
                 () -> new WebApplicationException(ErrorCode.MEMBER_NOT_FOUND, String.format("member with name %s not found", name))
         );
 
