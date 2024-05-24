@@ -25,4 +25,15 @@
 
 ## 반드시 JPA 가 최선인가?
 - JPA 는 배치 관련 작업을 할 때 SQL 매퍼에 비해 성능이 확실히 떨어진다.
-- 이 게시물은 추후 업데이트 예정이다. JPA 는 더 많은 양을 작성해야 한다.
+- 해당 프로젝트에서 티켓을 대량 생산할 때, JPA 를 사용하지 않고, JdbcTemplate 을 사용했다.
+
+## JdbcTemplate 사용 시 주의점
+- DB_URL 에 ?rewriteBatchedStatements=true 옵션을 달아줘야 제대로 성능을 낼 수 있다. 
+- 20만 개의 티켓을 생성했을 때 해당 옵션을 달아주기 전과 후가 16배의 성능 차이를 보였다. (64000ms -> 4000ms)
+
+## JPA 사용 시 주의점
+- JpaRepository 에서 제공하는 기본적인 쿼리 메소드들이 있으나 (find, delete, exists, count ...), 쿼리가 복잡해지면 의도한 대로와는 다르게 동작할 수 있다.
+- 이번 프로젝트에서 사용하는 findByIdAndDeletedAtIsNull 이라는 메소드를 예시로 들겠다.
+- 내가 의도한 쿼리는 `SELECT t FROM table t WHERE t.id = :id AND t.deletedAt IS NULL` 이었다.
+- 그러나 실제 실행된 쿼리는 `SELECT t FROM table t where t.id IS NULL AND t.deletedAt IS NULL` 이었다.
+- 이런 상황이 발생하면 JPQL (Java Persistence Query Language) 를 이용하여 쿼리를 더 명확하게 표현하여 오류가 발생하지 않게 하자.
