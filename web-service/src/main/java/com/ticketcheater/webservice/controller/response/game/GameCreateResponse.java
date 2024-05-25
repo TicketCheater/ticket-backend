@@ -7,8 +7,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class GameCreateResponse {
-    private Long id;
-    private String title;
+    private Long gameId;
+    private String gameTitle;
 
     public static GameCreateResponse from(GameDTO game) {
         return new GameCreateResponse(game.getId(), game.getTitle());

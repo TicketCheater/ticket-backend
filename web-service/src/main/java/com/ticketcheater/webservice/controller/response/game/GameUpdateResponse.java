@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class GameUpdateResponse {
-    private Long id;
+    private Long gameId;
     private String title;
 
     public static GameUpdateResponse from(GameDTO game) {
