@@ -389,7 +389,7 @@ class GameServiceTest {
         assertDoesNotThrow(() -> sut.restoreGame(gameId));
     }
 
-    @DisplayName("존재하는 게임 삭제 시 오류 발생")
+    @DisplayName("존재하는 게임 복구 시 오류 발생")
     @Test
     void givenExistentGame_whenRestore_thenThrowsError() {
         Long gameId = 1L;
