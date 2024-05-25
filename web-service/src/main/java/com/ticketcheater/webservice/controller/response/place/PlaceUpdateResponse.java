@@ -7,8 +7,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class PlaceUpdateResponse {
-    private Long id;
-    private String name;
+    private Long placeId;
+    private String placeName;
 
     public static PlaceUpdateResponse from(PlaceDTO dto) {
         return new PlaceUpdateResponse(dto.getId(), dto.getName());

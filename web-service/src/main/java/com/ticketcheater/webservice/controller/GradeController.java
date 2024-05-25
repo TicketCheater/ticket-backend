@@ -1,14 +1,12 @@
 package com.ticketcheater.webservice.controller;
 
+import com.ticketcheater.webservice.aop.RequireAdmin;
 import com.ticketcheater.webservice.controller.request.grade.GradeCreateRequest;
 import com.ticketcheater.webservice.controller.response.Response;
 import com.ticketcheater.webservice.controller.response.grade.GradeCreateResponse;
 import com.ticketcheater.webservice.controller.response.grade.GradeUpdateResponse;
-import com.ticketcheater.webservice.jwt.JwtTokenProvider;
 import com.ticketcheater.webservice.service.GradeService;
-import com.ticketcheater.webservice.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,44 +15,32 @@ import org.springframework.web.bind.annotation.*;
 public class GradeController {
 
     private final GradeService gradeService;
-    private final MemberService memberService;
-    private final JwtTokenProvider jwtTokenProvider;
 
+    @RequireAdmin
     @PostMapping("/create")
-    public Response<GradeCreateResponse> createGrade(
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String header,
-            @RequestBody GradeCreateRequest request
-    ) {
-        memberService.isAdmin(jwtTokenProvider.getName(header));
+    public Response<GradeCreateResponse> createGrade(@RequestBody GradeCreateRequest request) {
         return Response.success(GradeCreateResponse.from(gradeService.createGrade(request.getPlaceId(), request.getName())));
     }
 
+    @RequireAdmin
     @PatchMapping("/update/{gradeId}")
     public Response<GradeUpdateResponse> updateGrade(
             @PathVariable Long gradeId,
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String header,
             @RequestBody GradeCreateRequest request
     ) {
-        memberService.isAdmin(jwtTokenProvider.getName(header));
         return Response.success(GradeUpdateResponse.from(gradeService.updateGrade(gradeId, request.getPlaceId(), request.getName())));
     }
 
+    @RequireAdmin
     @PatchMapping("/delete/{gradeId}")
-    public Response<Void> deleteGrade(
-            @PathVariable Long gradeId,
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String header
-    ) {
-        memberService.isAdmin(jwtTokenProvider.getName(header));
+    public Response<Void> deleteGrade(@PathVariable Long gradeId) {
         gradeService.deleteGrade(gradeId);
         return Response.success();
     }
 
+    @RequireAdmin
     @PatchMapping("/restore/{gradeId}")
-    public Response<Void> restoreGrade(
-            @PathVariable Long gradeId,
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String header
-    ) {
-        memberService.isAdmin(jwtTokenProvider.getName(header));
+    public Response<Void> restoreGrade(@PathVariable Long gradeId) {
         gradeService.restoreGrade(gradeId);
         return Response.success();
     }

@@ -7,8 +7,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class GradeUpdateResponse {
-    private Long id;
-    private String name;
+    private Long gradeId;
+    private String gradeName;
 
     public static GradeUpdateResponse from(GradeDTO dto) {
         return new GradeUpdateResponse(dto.getId(), dto.getName());

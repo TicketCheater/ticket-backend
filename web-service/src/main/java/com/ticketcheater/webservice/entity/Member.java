@@ -6,10 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Table(indexes = {
-        @Index(name = "idx_member_name", columnList = "name", unique = true),
-        @Index(name = "idx_member_name_deletedAt", columnList = "name, deleted_at"),
-})
+@Table(indexes = @Index(name = "idx_member_name", columnList = "name", unique = true))
 @Entity(name = "member")
 public class Member extends BaseEntity {
 

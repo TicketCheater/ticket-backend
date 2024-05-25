@@ -8,10 +8,7 @@ import java.sql.Timestamp;
 
 @Getter
 @Setter
-@Table(indexes = {
-        @Index(name = "idx_game_id_deletedAt", columnList = "id, deleted_at"),
-        @Index(name = "idx_game_home_deletedAt", columnList = "home_id, deleted_at")
-})
+@Table(indexes = @Index(name = "idx_game_home_deletedAt", columnList = "home_id, deleted_at"))
 @Entity(name = "game")
 public class Game extends BaseEntity {
 

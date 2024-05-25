@@ -7,8 +7,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class PlaceCreateResponse {
-    private Long id;
-    private String name;
+    private Long placeId;
+    private String placeName;
 
     public static PlaceCreateResponse from(PlaceDTO dto) {
         return new PlaceCreateResponse(dto.getId(), dto.getName());

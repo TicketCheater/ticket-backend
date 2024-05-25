@@ -7,8 +7,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class MemberSignupResponse {
-    private Long id;
-    private String name;
+    private Long memberId;
+    private String memberName;
 
     public static MemberSignupResponse from(MemberDTO member) {
         return new MemberSignupResponse(member.getId(), member.getName());
