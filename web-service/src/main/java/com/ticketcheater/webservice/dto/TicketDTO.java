@@ -16,6 +16,7 @@ public class TicketDTO {
     private Long gameId;
     private Long memberId;
     private Long gradeId;
+    private Long paymentId;
     private boolean isReserved;
     private Timestamp createdAt;
     private Timestamp updatedAt;
@@ -27,10 +28,12 @@ public class TicketDTO {
                 ticket.getGame().getId(),
                 ticket.getMember() != null ? ticket.getMember().getId() : null,
                 ticket.getGrade().getId(),
+                ticket.getPayment() != null ? ticket.getPayment().getId() : null,
                 ticket.isReserved(),
                 ticket.getCreatedAt(),
                 ticket.getUpdatedAt(),
                 ticket.getDeletedAt()
         );
     }
+
 }
