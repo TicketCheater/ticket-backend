@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Table
+@Table(indexes = @Index(name = "idx_payment_id_deletedAt", columnList = "id, deleted_at"))
 @Entity(name = "payment")
 public class Payment extends BaseEntity {
 
@@ -17,6 +17,9 @@ public class Payment extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
+
+    @OneToOne(mappedBy = "payment")
+    private Ticket ticket;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "method")

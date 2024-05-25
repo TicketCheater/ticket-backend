@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Table
+@Table(indexes = @Index(name = "idx_ticket_id_deletedAt", columnList = "id, deleted_at"))
 @Entity(name = "ticket")
 public class Ticket extends BaseEntity {
 
@@ -21,6 +21,10 @@ public class Ticket extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @OneToOne
+    @JoinColumn(name = "payment_id")
+    private Payment payment;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "grade_id", nullable = false)

@@ -1,6 +1,10 @@
 package com.ticketcheater.webservice.controller;
 
+import com.ticketcheater.webservice.controller.request.ticket.PaymentRequest;
 import com.ticketcheater.webservice.controller.request.ticket.TicketCreateRequest;
+import com.ticketcheater.webservice.controller.response.Response;
+import com.ticketcheater.webservice.controller.response.ticket.PaymentResponse;
+import com.ticketcheater.webservice.controller.response.ticket.TicketReserveResponse;
 import com.ticketcheater.webservice.jwt.JwtTokenProvider;
 import com.ticketcheater.webservice.service.MemberService;
 import com.ticketcheater.webservice.service.TicketService;
@@ -18,12 +22,40 @@ public class TicketController {
     private final MemberService memberService;
 
     @PostMapping("/create")
-    public void createTickets(
+    public Response<Void> createTickets(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String header,
             @RequestBody TicketCreateRequest request
     ) {
         memberService.isAdmin(jwtTokenProvider.getName(header));
         ticketService.createTickets(request.getGameId(), request.getGradeId(), request.getQuantity(), request.getPrice());
+        return Response.success();
+    }
+
+    @PostMapping("/reserve/{ticketId}")
+    public Response<TicketReserveResponse> reserveTicket(
+            @PathVariable Long ticketId,
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String header
+    ) {
+        return Response.success(TicketReserveResponse.from(ticketService.reserveTicket(
+                ticketId, jwtTokenProvider.getName(header)
+        )));
+    }
+
+    @PostMapping("/payment/{ticketId}")
+    public Response<PaymentResponse> createPayment(
+            @PathVariable Long ticketId,
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String header,
+            @RequestBody PaymentRequest request
+    ) {
+        return Response.success(PaymentResponse.from(ticketService.createPayment(
+                ticketId, jwtTokenProvider.getName(header), request.getMethod(), request.getAmount()
+        )));
+    }
+
+    @PostMapping("/cancel/{ticketId}")
+    public Response<Void> cancelReservation(@PathVariable Long ticketId) {
+        ticketService.cancelReservation(ticketId);
+        return Response.success();
     }
 
 }
