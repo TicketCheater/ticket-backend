@@ -1,12 +1,12 @@
 package com.ticketcheater.webservice.controller;
 
+import com.ticketcheater.webservice.aop.RequireAdmin;
 import com.ticketcheater.webservice.controller.request.ticket.PaymentRequest;
 import com.ticketcheater.webservice.controller.request.ticket.TicketCreateRequest;
 import com.ticketcheater.webservice.controller.response.Response;
 import com.ticketcheater.webservice.controller.response.ticket.PaymentResponse;
 import com.ticketcheater.webservice.controller.response.ticket.TicketReserveResponse;
 import com.ticketcheater.webservice.jwt.JwtTokenProvider;
-import com.ticketcheater.webservice.service.MemberService;
 import com.ticketcheater.webservice.service.TicketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -19,14 +19,10 @@ public class TicketController {
 
     private final TicketService ticketService;
     private final JwtTokenProvider jwtTokenProvider;
-    private final MemberService memberService;
 
+    @RequireAdmin
     @PostMapping("/create")
-    public Response<Void> createTickets(
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String header,
-            @RequestBody TicketCreateRequest request
-    ) {
-        memberService.isAdmin(jwtTokenProvider.getName(header));
+    public Response<Void> createTickets(@RequestBody TicketCreateRequest request) {
         ticketService.createTickets(request.getGameId(), request.getGradeId(), request.getQuantity(), request.getPrice());
         return Response.success();
     }
