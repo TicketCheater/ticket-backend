@@ -38,9 +38,9 @@ Content-Type: application/json
 {
   "type": "baseball",
   "title": "한국시리즈 1차전",
-  "home": 1,
-  "away": 2,
-  "place": 1,
+  "homeId": 1,
+  "awayId": 2,
+  "placeId": 1,
   "startedAt": "2024-03-02T17:00:00"
 }
 
