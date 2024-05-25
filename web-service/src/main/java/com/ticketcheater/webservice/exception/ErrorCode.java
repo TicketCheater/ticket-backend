@@ -26,6 +26,7 @@ public enum ErrorCode {
     PLACE_ALREADY_EXISTS(HttpStatus.CONFLICT, "Place already exists"),
     INVALID_PLACE(HttpStatus.FORBIDDEN, "Invalid place"),
 
+    PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "Payment not found"),
     PAYMENT_METHOD_NOT_FOUND(HttpStatus.NOT_FOUND, "Payment method not found"),
 
     GRADE_NOT_FOUND(HttpStatus.NOT_FOUND, "Grade not found"),
@@ -33,6 +34,8 @@ public enum ErrorCode {
 
     INVALID_TICKET_QUANTITY(HttpStatus.FORBIDDEN, "Invalid ticket quantity"),
     INVALID_TICKET_PRICE(HttpStatus.FORBIDDEN, "Invalid ticket price"),
+    TICKET_NOT_FOUND(HttpStatus.NOT_FOUND, "Ticket not found"),
+    TICKET_ALREADY_BOOKED(HttpStatus.FORBIDDEN, "Ticket already booked"),
     ;
 
     private final HttpStatus status;
