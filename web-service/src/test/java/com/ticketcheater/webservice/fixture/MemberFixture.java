@@ -16,6 +16,17 @@ public class MemberFixture {
         return member;
     }
 
+    public static Member get(String name) {
+        Member member = new Member();
+        member.setId(1L);
+        member.setName(name);
+        member.setPassword("password");
+        member.setEmail("email");
+        member.setNickname("nickname");
+        member.setRole(MemberRole.MEMBER);
+        return member;
+    }
+
     public static Member get(MemberRole role) {
         Member member = new Member();
         member.setId(1L);

@@ -23,3 +23,21 @@ Content-Type: application/json
   "quantity": 2000000,
   "price": 18000
 }
+
+### 티켓 예매
+POST http://localhost:8001/web/tickets/reserve/1
+Authorization: Bearer {{accessToken}}
+
+### 티켓 결제
+POST http://localhost:8001/web/tickets/payment/1
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "method": "card",
+  "amount": 18000
+}
+
+### 티켓 취소
+POST http://localhost:8001/web/tickets/cancel/1
+Authorization: Bearer {{accessToken}}
