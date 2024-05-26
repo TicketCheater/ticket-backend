@@ -2,10 +2,7 @@ package com.ticketcheater.webservice.service;
 
 import com.ticketcheater.webservice.dto.PaymentDTO;
 import com.ticketcheater.webservice.dto.TicketDTO;
-import com.ticketcheater.webservice.entity.Member;
-import com.ticketcheater.webservice.entity.Payment;
-import com.ticketcheater.webservice.entity.PaymentMethod;
-import com.ticketcheater.webservice.entity.Ticket;
+import com.ticketcheater.webservice.entity.*;
 import com.ticketcheater.webservice.exception.ErrorCode;
 import com.ticketcheater.webservice.exception.WebApplicationException;
 import com.ticketcheater.webservice.repository.*;
@@ -121,6 +118,22 @@ public class TicketService {
         ticketRepository.saveAndFlush(ticket);
 
         log.info("cancel reservation method executed successfully: ticket id={}", ticketId);
+    }
+
+    @Transactional
+    public void deleteTicket(Long gameId) {
+        findGameById(gameId);
+        String sql = "UPDATE ticket SET deleted_at = ? WHERE game_id = ? AND deleted_at IS NULL";
+        jdbcTemplate.update(sql, new Timestamp(System.currentTimeMillis()), gameId);
+    }
+
+    @Transactional
+    public void restoreTicket(Long gameId) {
+        gameRepository.findByIdAndDeletedAtIsNotNull(gameId).orElseThrow(
+                () -> new WebApplicationException(ErrorCode.GAME_ALREADY_EXISTS, String.format("game id %d already exists", gameId))
+        );
+        String sql = "UPDATE ticket SET deleted_at = NULL WHERE game_id = ? AND deleted_at IS NOT NULL";
+        jdbcTemplate.update(sql, gameId);
     }
 
     private void executeBatchInsert(List<Object[]> batchArgs) {
