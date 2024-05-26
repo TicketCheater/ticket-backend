@@ -1,9 +1,15 @@
 package com.ticketcheater.webservice.service;
 
-import com.ticketcheater.webservice.entity.*;
+import com.ticketcheater.webservice.entity.Game;
+import com.ticketcheater.webservice.entity.Grade;
+import com.ticketcheater.webservice.entity.Member;
+import com.ticketcheater.webservice.entity.Ticket;
 import com.ticketcheater.webservice.exception.ErrorCode;
 import com.ticketcheater.webservice.exception.WebApplicationException;
-import com.ticketcheater.webservice.fixture.*;
+import com.ticketcheater.webservice.fixture.GameFixture;
+import com.ticketcheater.webservice.fixture.GradeFixture;
+import com.ticketcheater.webservice.fixture.MemberFixture;
+import com.ticketcheater.webservice.fixture.TicketFixture;
 import com.ticketcheater.webservice.repository.GameRepository;
 import com.ticketcheater.webservice.repository.GradeRepository;
 import com.ticketcheater.webservice.repository.MemberRepository;
@@ -15,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.sql.Timestamp;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -439,6 +446,62 @@ class TicketServiceTest {
         );
 
         assertEquals(ErrorCode.TICKET_NOT_FOUND, exception.getCode());
+    }
+
+    @DisplayName("티켓 삭제 정상 동작")
+    @Test
+    void givenGame_whenDelete_thenUpdatesDeletedAt() {
+        Long gameId = 1L;
+        Game game = GameFixture.get(gameId);
+
+        when(gameRepository.findByIdAndDeletedAtIsNull(gameId)).thenReturn(Optional.of(game));
+
+        assertDoesNotThrow(() -> sut.deleteTicket(gameId));
+
+        verify(jdbcTemplate, times(1))
+                .update(eq("UPDATE ticket SET deleted_at = ? WHERE game_id = ? AND deleted_at IS NULL"), any(Timestamp.class), eq(gameId));
+    }
+
+    @DisplayName("없는 게임의 티켓 삭제 시 오류 발생")
+    @Test
+    void givenNonExistentGame_whenDelete_thenThrowsError() {
+        Long gameId = 1L;
+
+        when(gameRepository.findByIdAndDeletedAtIsNull(gameId)).thenReturn(Optional.empty());
+
+        WebApplicationException exception = assertThrows(
+                WebApplicationException.class, () -> sut.deleteTicket(gameId)
+        );
+
+        assertEquals(ErrorCode.GAME_NOT_FOUND, exception.getCode());
+    }
+
+    @DisplayName("티켓 복구 정상 동작")
+    @Test
+    void givenGame_whenRestore_thenUpdatesDeletedAtToNull() {
+        Long gameId = 1L;
+        Game game = GameFixture.get(gameId);
+
+        when(gameRepository.findByIdAndDeletedAtIsNotNull(gameId)).thenReturn(Optional.of(game));
+
+        assertDoesNotThrow(() -> sut.restoreTicket(gameId));
+
+        verify(jdbcTemplate, times(1))
+                .update(eq("UPDATE ticket SET deleted_at = NULL WHERE game_id = ? AND deleted_at IS NOT NULL"), eq(gameId));
+    }
+
+    @DisplayName("이미 존재하는 게임의 티켓 복구 시 오류 발생")
+    @Test
+    void givenExistentGame_whenRestore_thenThrowsError() {
+        Long gameId = 1L;
+
+        when(gameRepository.findByIdAndDeletedAtIsNotNull(gameId)).thenReturn(Optional.empty());
+
+        WebApplicationException exception = assertThrows(
+                WebApplicationException.class, () -> sut.restoreTicket(gameId)
+        );
+
+        assertEquals(ErrorCode.GAME_ALREADY_EXISTS, exception.getCode());
     }
 
     // 동시성 테스트 설정

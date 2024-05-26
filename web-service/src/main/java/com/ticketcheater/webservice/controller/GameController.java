@@ -8,6 +8,7 @@ import com.ticketcheater.webservice.controller.response.game.GameCreateResponse;
 import com.ticketcheater.webservice.controller.response.game.GameReadByHomeResponse;
 import com.ticketcheater.webservice.controller.response.game.GameUpdateResponse;
 import com.ticketcheater.webservice.service.GameService;
+import com.ticketcheater.webservice.service.TicketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 public class GameController {
 
     private final GameService gameService;
+    private final TicketService ticketService;
 
     @RequireAdmin
     @PostMapping("/create")
@@ -45,6 +47,7 @@ public class GameController {
     @RequireAdmin
     @PatchMapping("/delete/{gameId}")
     public Response<Void> deleteGame(@PathVariable Long gameId) {
+        ticketService.deleteTicket(gameId);
         gameService.deleteGame(gameId);
         return Response.success();
     }
@@ -52,6 +55,7 @@ public class GameController {
     @RequireAdmin
     @PatchMapping("/restore/{gameId}")
     public Response<Void> restoreGame(@PathVariable Long gameId) {
+        ticketService.restoreTicket(gameId);
         gameService.restoreGame(gameId);
         return Response.success();
     }

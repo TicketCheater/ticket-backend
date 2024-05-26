@@ -9,6 +9,7 @@ import com.ticketcheater.webservice.exception.WebApplicationException;
 import com.ticketcheater.webservice.jwt.JwtTokenProvider;
 import com.ticketcheater.webservice.service.GameService;
 import com.ticketcheater.webservice.service.MemberService;
+import com.ticketcheater.webservice.service.TicketService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,9 @@ class GameControllerTest {
 
     @MockBean
     GameService gameService;
+
+    @MockBean
+    TicketService ticketService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -269,6 +273,7 @@ class GameControllerTest {
         when(jwtTokenProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         doNothing().when(gameService).deleteGame(eq(1L));
+        doNothing().when(ticketService).deleteTicket(eq(1L));
 
         mvc.perform(patch("/v1/web/games/delete/1")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
@@ -285,6 +290,7 @@ class GameControllerTest {
         when(jwtTokenProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         doThrow(new WebApplicationException(ErrorCode.GAME_NOT_FOUND)).when(gameService).deleteGame(eq(1L));
+        doThrow(new WebApplicationException(ErrorCode.GAME_NOT_FOUND)).when(ticketService).deleteTicket(eq(1L));
 
         mvc.perform(patch("/v1/web/games/delete/1")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
@@ -292,7 +298,7 @@ class GameControllerTest {
                 .andExpect(status().is(ErrorCode.GAME_NOT_FOUND.getStatus().value()));
     }
 
-    @DisplayName("관리자가 아닌 회원이 게임 수정 시 오류 발생")
+    @DisplayName("관리자가 아닌 회원이 게임 삭제 시 오류 발생")
     @Test
     void givenNonAdminMember_whenDelete_thenThrowsError() throws Exception {
         String token = "dummy";
@@ -301,6 +307,7 @@ class GameControllerTest {
         when(jwtTokenProvider.getName(anyString())).thenReturn(name);
         doThrow(new WebApplicationException(ErrorCode.INVALID_TOKEN)).when(memberService).isAdmin(name);
         doNothing().when(gameService).deleteGame(eq(1L));
+        doNothing().when(ticketService).deleteTicket(eq(1L));
 
         mvc.perform(patch("/v1/web/games/delete/1")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
@@ -317,6 +324,7 @@ class GameControllerTest {
         when(jwtTokenProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         doNothing().when(gameService).restoreGame(eq(1L));
+        doNothing().when(ticketService).restoreTicket(eq(1L));
 
         mvc.perform(patch("/v1/web/games/restore/1")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
@@ -333,6 +341,7 @@ class GameControllerTest {
         when(jwtTokenProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         doThrow(new WebApplicationException(ErrorCode.GAME_ALREADY_EXISTS)).when(gameService).restoreGame(eq(1L));
+        doThrow(new WebApplicationException(ErrorCode.GAME_ALREADY_EXISTS)).when(ticketService).restoreTicket(eq(1L));
 
         mvc.perform(patch("/v1/web/games/restore/1")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
@@ -349,6 +358,7 @@ class GameControllerTest {
         when(jwtTokenProvider.getName(anyString())).thenReturn(name);
         doThrow(new WebApplicationException(ErrorCode.INVALID_TOKEN)).when(memberService).isAdmin(name);
         doNothing().when(gameService).restoreGame(eq(1L));
+        doNothing().when(ticketService).restoreTicket(eq(1L));
 
         mvc.perform(patch("/v1/web/games/restore/1")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
