@@ -4,7 +4,7 @@ spring:
   data:
     redis:
       host: 127.0.0.1
-      port: 6379
+      port: 6380
 
 eureka:
   client:
@@ -15,3 +15,9 @@ eureka:
 
 server:
   port: 9002
+
+scheduler:
+  enabled: true
+
+jwt:
+  secret-key: ${JWT_SECRET_KEY}
