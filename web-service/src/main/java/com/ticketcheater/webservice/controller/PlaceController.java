@@ -1,6 +1,6 @@
 package com.ticketcheater.webservice.controller;
 
-import com.ticketcheater.webservice.aop.RequireAdmin;
+import com.ticketcheater.webservice.interceptor.RequireAdmin;
 import com.ticketcheater.webservice.controller.request.place.PlaceCreateRequest;
 import com.ticketcheater.webservice.controller.request.place.PlaceUpdateRequest;
 import com.ticketcheater.webservice.controller.response.Response;

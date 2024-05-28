@@ -1,6 +1,5 @@
 package com.ticketcheater.webservice.interceptor;
 
-import com.ticketcheater.webservice.aop.RequireAdmin;
 import com.ticketcheater.webservice.exception.ErrorCode;
 import com.ticketcheater.webservice.exception.WebApplicationException;
 import com.ticketcheater.webservice.jwt.JwtTokenProvider;
