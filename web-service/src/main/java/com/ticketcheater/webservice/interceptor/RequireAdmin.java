@@ -1,4 +1,4 @@
-package com.ticketcheater.webservice.aop;
+package com.ticketcheater.webservice.interceptor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
