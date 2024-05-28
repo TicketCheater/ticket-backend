@@ -1,0 +1,37 @@
+### 회원가입
+POST http://localhost:8001/web/members/signup
+Content-Type: application/json
+
+{
+  "name": "name",
+  "password": "!password12",
+  "email": "email",
+  "nickname": "nickname"
+}
+
+### 로그인
+POST http://localhost:8001/web/members/login
+Content-Type: application/json
+
+{
+  "name": "name",
+  "password": "!password12"
+}
+
+> {%
+    client.global.set("accessToken", response.body.result.accessToken);
+    client.global.set("refreshToken", response.body.result.refreshToken);
+%}
+
+### 대기열 등록
+POST http://localhost:8001/flow/register/1
+Authorization: Bearer {{accessToken}}
+
+### 대기열 탐색
+GET http://localhost:8001/flow/1
+Authorization: Bearer {{accessToken}}
+
+> {%
+    let setCookie = response.headers['Set-Cookie'];
+    client.global.set('cookie', setCookie);
+%}
