@@ -5,8 +5,8 @@ import com.ticketcheater.webservice.entity.Member;
 import com.ticketcheater.webservice.entity.MemberRole;
 import com.ticketcheater.webservice.exception.ErrorCode;
 import com.ticketcheater.webservice.exception.WebApplicationException;
-import com.ticketcheater.webservice.jwt.JwtTokenProvider;
-import com.ticketcheater.webservice.jwt.TokenDTO;
+import com.ticketcheater.webservice.token.JwtProvider;
+import com.ticketcheater.webservice.token.JwtDTO;
 import com.ticketcheater.webservice.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +24,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder encoder;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtProvider jwtProvider;
 
     @Transactional
     public MemberDTO signup(String name, String password, String email, String nickname) {
@@ -43,7 +43,7 @@ public class MemberService {
         return MemberDTO.toDTO(member);
     }
 
-    public TokenDTO login(String name, String password) {
+    public JwtDTO login(String name, String password) {
         MemberDTO member = memberRepository.findByNameAndDeletedAtIsNull(name).map(MemberDTO::toDTO).orElseThrow(
                 () -> new WebApplicationException(ErrorCode.MEMBER_NOT_FOUND, String.format("member with name %s not found", name))
         );
@@ -52,16 +52,16 @@ public class MemberService {
             throw new WebApplicationException(ErrorCode.INVALID_PASSWORD, "password is not valid");
         }
 
-        final String accessToken = jwtTokenProvider.generateAccessToken(name);
-        final String refreshToken = jwtTokenProvider.generateRefreshToken(name);
+        final String accessToken = jwtProvider.generateAccessToken(name);
+        final String refreshToken = jwtProvider.generateRefreshToken(name);
 
         log.info("login method executed successfully for member: name={}", name);
 
-        return TokenDTO.of(accessToken, refreshToken);
+        return JwtDTO.of(accessToken, refreshToken);
     }
 
     public void logout(String name) {
-        jwtTokenProvider.deleteRefreshToken(name);
+        jwtProvider.deleteRefreshToken(name);
         log.info("logout method executed successfully for member: name={}", name);
     }
 

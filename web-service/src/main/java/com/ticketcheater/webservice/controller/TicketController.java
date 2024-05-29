@@ -1,13 +1,19 @@
 package com.ticketcheater.webservice.controller;
 
-import com.ticketcheater.webservice.interceptor.RequireAdmin;
 import com.ticketcheater.webservice.controller.request.ticket.PaymentRequest;
 import com.ticketcheater.webservice.controller.request.ticket.TicketCreateRequest;
+import com.ticketcheater.webservice.controller.request.ticket.TicketReserveRequest;
 import com.ticketcheater.webservice.controller.response.Response;
 import com.ticketcheater.webservice.controller.response.ticket.PaymentResponse;
 import com.ticketcheater.webservice.controller.response.ticket.TicketReserveResponse;
-import com.ticketcheater.webservice.jwt.JwtTokenProvider;
+import com.ticketcheater.webservice.exception.ErrorCode;
+import com.ticketcheater.webservice.exception.WebApplicationException;
+import com.ticketcheater.webservice.interceptor.RequireAdmin;
 import com.ticketcheater.webservice.service.TicketService;
+import com.ticketcheater.webservice.token.JwtProvider;
+import com.ticketcheater.webservice.token.TokenGenerator;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 public class TicketController {
 
     private final TicketService ticketService;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtProvider jwtProvider;
 
     @RequireAdmin
     @PostMapping("/create")
@@ -27,13 +33,32 @@ public class TicketController {
         return Response.success();
     }
 
-    @PostMapping("/reserve/{ticketId}")
+    @PostMapping("/reserve")
     public Response<TicketReserveResponse> reserveTicket(
-            @PathVariable Long ticketId,
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String header
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String header,
+            HttpServletRequest httpRequest,
+            @RequestBody TicketReserveRequest request
     ) {
+        String memberName = jwtProvider.getName(header);
+        String gameId = String.valueOf(request.getGameId());
+        String tokenName = "member-queue-%s-token".formatted(gameId);
+
+        String cookieToken = null;
+        if(httpRequest.getCookies() != null) {
+            for(Cookie cookie : httpRequest.getCookies()) {
+                if(tokenName.equals(cookie.getName())) {
+                    cookieToken = cookie.getValue();
+                    break;
+                }
+            }
+        }
+
+        if(cookieToken == null || !TokenGenerator.validateToken(cookieToken, gameId, memberName)) {
+            throw new WebApplicationException(ErrorCode.INVALID_TOKEN, "Invalid or missing token");
+        }
+
         return Response.success(TicketReserveResponse.from(ticketService.reserveTicket(
-                ticketId, jwtTokenProvider.getName(header)
+                request.getTicketId(), memberName
         )));
     }
 
@@ -44,7 +69,7 @@ public class TicketController {
             @RequestBody PaymentRequest request
     ) {
         return Response.success(PaymentResponse.from(ticketService.createPayment(
-                ticketId, jwtTokenProvider.getName(header), request.getMethod(), request.getAmount()
+                ticketId, jwtProvider.getName(header), request.getMethod(), request.getAmount()
         )));
     }
 

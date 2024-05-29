@@ -6,7 +6,7 @@ import com.ticketcheater.webservice.controller.request.game.GameUpdateRequest;
 import com.ticketcheater.webservice.dto.GameDTO;
 import com.ticketcheater.webservice.exception.ErrorCode;
 import com.ticketcheater.webservice.exception.WebApplicationException;
-import com.ticketcheater.webservice.jwt.JwtTokenProvider;
+import com.ticketcheater.webservice.token.JwtProvider;
 import com.ticketcheater.webservice.service.GameService;
 import com.ticketcheater.webservice.service.MemberService;
 import com.ticketcheater.webservice.service.TicketService;
@@ -41,7 +41,7 @@ class GameControllerTest {
     MemberService memberService;
 
     @MockBean
-    JwtTokenProvider jwtTokenProvider;
+    JwtProvider jwtProvider;
 
     @MockBean
     GameService gameService;
@@ -58,7 +58,7 @@ class GameControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         when(gameService.createGame(any())).thenReturn(mock(GameDTO.class));
 
@@ -76,7 +76,7 @@ class GameControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doThrow(new WebApplicationException(ErrorCode.INVALID_TOKEN)).when(memberService).isAdmin(name);
         when(gameService.createGame(any())).thenReturn(mock(GameDTO.class));
 
@@ -94,7 +94,7 @@ class GameControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         when(gameService.createGame(any())).thenThrow(new WebApplicationException(ErrorCode.GAME_TYPE_NOT_FOUND));
 
@@ -112,7 +112,7 @@ class GameControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         when(gameService.createGame(any())).thenThrow(new WebApplicationException(ErrorCode.TEAM_NOT_FOUND));
 
@@ -130,7 +130,7 @@ class GameControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         when(gameService.createGame(any())).thenThrow(new WebApplicationException(ErrorCode.PLACE_NOT_FOUND));
 
@@ -148,7 +148,7 @@ class GameControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         when(gameService.getGamesByHome(eq(1L))).thenReturn(List.of(mock(GameDTO.class)));
 
         mvc.perform(get("/v1/web/games/1")
@@ -164,7 +164,7 @@ class GameControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         when(gameService.getGamesByHome(eq(1L))).thenThrow(new WebApplicationException(ErrorCode.TEAM_NOT_FOUND));
 
         mvc.perform(get("/v1/web/games/1")
@@ -180,7 +180,7 @@ class GameControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         when(gameService.updateGame(eq(1L), any())).thenReturn(mock(GameDTO.class));
 
@@ -198,7 +198,7 @@ class GameControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         when(gameService.updateGame(eq(1L), any())).thenThrow(new WebApplicationException(ErrorCode.GAME_NOT_FOUND));
 
@@ -216,7 +216,7 @@ class GameControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         when(gameService.updateGame(eq(1L), any())).thenThrow(new WebApplicationException(ErrorCode.TEAM_NOT_FOUND));
 
@@ -234,7 +234,7 @@ class GameControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         when(gameService.updateGame(eq(1L), any())).thenThrow(new WebApplicationException(ErrorCode.PLACE_NOT_FOUND));
 
@@ -252,7 +252,7 @@ class GameControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doThrow(new WebApplicationException(ErrorCode.INVALID_TOKEN)).when(memberService).isAdmin(name);
         when(gameService.updateGame(eq(1L), any())).thenReturn(mock(GameDTO.class));
 
@@ -270,7 +270,7 @@ class GameControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         doNothing().when(gameService).deleteGame(eq(1L));
         doNothing().when(ticketService).deleteTicket(eq(1L));
@@ -287,7 +287,7 @@ class GameControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         doThrow(new WebApplicationException(ErrorCode.GAME_NOT_FOUND)).when(gameService).deleteGame(eq(1L));
         doThrow(new WebApplicationException(ErrorCode.GAME_NOT_FOUND)).when(ticketService).deleteTicket(eq(1L));
@@ -304,7 +304,7 @@ class GameControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doThrow(new WebApplicationException(ErrorCode.INVALID_TOKEN)).when(memberService).isAdmin(name);
         doNothing().when(gameService).deleteGame(eq(1L));
         doNothing().when(ticketService).deleteTicket(eq(1L));
@@ -321,7 +321,7 @@ class GameControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         doNothing().when(gameService).restoreGame(eq(1L));
         doNothing().when(ticketService).restoreTicket(eq(1L));
@@ -338,7 +338,7 @@ class GameControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         doThrow(new WebApplicationException(ErrorCode.GAME_ALREADY_EXISTS)).when(gameService).restoreGame(eq(1L));
         doThrow(new WebApplicationException(ErrorCode.GAME_ALREADY_EXISTS)).when(ticketService).restoreTicket(eq(1L));
@@ -355,7 +355,7 @@ class GameControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doThrow(new WebApplicationException(ErrorCode.INVALID_TOKEN)).when(memberService).isAdmin(name);
         doNothing().when(gameService).restoreGame(eq(1L));
         doNothing().when(ticketService).restoreTicket(eq(1L));

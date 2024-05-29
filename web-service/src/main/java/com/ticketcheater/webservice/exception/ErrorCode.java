@@ -36,6 +36,8 @@ public enum ErrorCode {
     INVALID_TICKET_PRICE(HttpStatus.FORBIDDEN, "Invalid ticket price"),
     TICKET_NOT_FOUND(HttpStatus.NOT_FOUND, "Ticket not found"),
     TICKET_ALREADY_BOOKED(HttpStatus.FORBIDDEN, "Ticket already booked"),
+
+    NO_SUCH_ALGORITHM(HttpStatus.INTERNAL_SERVER_ERROR, "No such algorithm"),
     ;
 
     private final HttpStatus status;

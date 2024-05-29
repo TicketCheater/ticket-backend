@@ -3,8 +3,8 @@ package com.ticketcheater.webservice.controller;
 import com.ticketcheater.webservice.controller.request.member.*;
 import com.ticketcheater.webservice.controller.response.Response;
 import com.ticketcheater.webservice.controller.response.member.*;
-import com.ticketcheater.webservice.jwt.JwtTokenProvider;
-import com.ticketcheater.webservice.jwt.TokenDTO;
+import com.ticketcheater.webservice.token.JwtProvider;
+import com.ticketcheater.webservice.token.JwtDTO;
 import com.ticketcheater.webservice.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
 
     private final MemberService memberService;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtProvider jwtProvider;
 
     @PostMapping("/signup")
     public Response<MemberSignupResponse> signup(@RequestBody MemberSignupRequest request) {
@@ -27,7 +27,7 @@ public class MemberController {
 
     @PostMapping("/login")
     public Response<MemberLoginResponse> login(@RequestBody MemberLoginRequest request) {
-        TokenDTO token = memberService.login(request.getName(), request.getPassword());
+        JwtDTO token = memberService.login(request.getName(), request.getPassword());
         return Response.success(MemberLoginResponse.from(token.accessToken(), token.refreshToken()));
     }
 
@@ -37,20 +37,20 @@ public class MemberController {
             @RequestBody MemberValidateRequest request
     ) {
         return Response.success(MemberValidateResponse.from(memberService.validateMember(
-                jwtTokenProvider.getName(header), request.getPassword()
+                jwtProvider.getName(header), request.getPassword()
         )));
     }
 
     @PostMapping("/reissue")
     public Response<MemberReissueResponse> reissue(@RequestBody MemberReissueRequest request) {
-        return Response.success(MemberReissueResponse.from(jwtTokenProvider.reissueAccessToken(
+        return Response.success(MemberReissueResponse.from(jwtProvider.reissueAccessToken(
                 request.getRefreshToken()
         )));
     }
 
     @PostMapping("/logout")
     public Response<Void> logout(@RequestHeader(HttpHeaders.AUTHORIZATION) String header) {
-        memberService.logout(jwtTokenProvider.getName(header));
+        memberService.logout(jwtProvider.getName(header));
         return Response.success();
     }
 
@@ -60,13 +60,13 @@ public class MemberController {
             @RequestBody MemberUpdateRequest request
     ) {
         return Response.success(MemberUpdateResponse.from(memberService.updateMember(
-                jwtTokenProvider.getName(header), request.getPassword(), request.getNickname()
+                jwtProvider.getName(header), request.getPassword(), request.getNickname()
         )));
     }
 
     @PatchMapping("/delete")
     public Response<Void> delete(@RequestHeader(HttpHeaders.AUTHORIZATION) String header) {
-        memberService.deleteMember(jwtTokenProvider.getName(header));
+        memberService.deleteMember(jwtProvider.getName(header));
         return Response.success();
     }
 

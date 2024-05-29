@@ -5,7 +5,7 @@ import com.ticketcheater.webservice.controller.request.grade.GradeCreateRequest;
 import com.ticketcheater.webservice.dto.GradeDTO;
 import com.ticketcheater.webservice.exception.ErrorCode;
 import com.ticketcheater.webservice.exception.WebApplicationException;
-import com.ticketcheater.webservice.jwt.JwtTokenProvider;
+import com.ticketcheater.webservice.token.JwtProvider;
 import com.ticketcheater.webservice.service.GradeService;
 import com.ticketcheater.webservice.service.MemberService;
 import org.junit.jupiter.api.DisplayName;
@@ -37,7 +37,7 @@ class GradeControllerTest {
     MemberService memberService;
 
     @MockBean
-    JwtTokenProvider jwtTokenProvider;
+    JwtProvider jwtProvider;
 
     @MockBean
     GradeService gradeService;
@@ -51,7 +51,7 @@ class GradeControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         when(gradeService.createGrade(eq(1L), eq("VIP"))).thenReturn(mock(GradeDTO.class));
 
@@ -69,7 +69,7 @@ class GradeControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doThrow(new WebApplicationException(ErrorCode.INVALID_TOKEN)).when(memberService).isAdmin(name);
 
         mvc.perform(post("/v1/web/grades/create")
@@ -86,7 +86,7 @@ class GradeControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         when(gradeService.createGrade(eq(999L), eq("VIP"))).thenThrow(new WebApplicationException(ErrorCode.PLACE_NOT_FOUND));
 
@@ -104,7 +104,7 @@ class GradeControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         when(gradeService.createGrade(eq(1L), eq("VIP"))).thenThrow(new WebApplicationException(ErrorCode.GRADE_ALREADY_EXISTS));
 
@@ -122,7 +122,7 @@ class GradeControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         when(gradeService.updateGrade(eq(1L), eq(1L), eq("VVIP"))).thenReturn(mock(GradeDTO.class));
 
@@ -140,7 +140,7 @@ class GradeControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         when(gradeService.updateGrade(eq(1L), eq(999L), eq("VVIP"))).thenThrow(new WebApplicationException(ErrorCode.PLACE_NOT_FOUND));
 
@@ -158,7 +158,7 @@ class GradeControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         when(gradeService.updateGrade(eq(1L), eq(1L), eq("VVIP"))).thenThrow(new WebApplicationException(ErrorCode.GRADE_NOT_FOUND));
 
@@ -176,7 +176,7 @@ class GradeControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         doNothing().when(gradeService).deleteGrade(eq(1L));
 
@@ -192,7 +192,7 @@ class GradeControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         doThrow(new WebApplicationException(ErrorCode.GRADE_NOT_FOUND)).when(gradeService).deleteGrade(eq(1L));
 
@@ -208,7 +208,7 @@ class GradeControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         doNothing().when(gradeService).restoreGrade(eq(1L));
 
@@ -224,7 +224,7 @@ class GradeControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         doThrow(new WebApplicationException(ErrorCode.GRADE_ALREADY_EXISTS)).when(gradeService).restoreGrade(eq(1L));
 
