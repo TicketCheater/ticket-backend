@@ -25,6 +25,7 @@ spring:
             - Path=/flow/**
           filters:
             - RewritePath=/flow/(?<segment>.*),/v1/flow/$\{segment}
+            - AuthorizationHeaderFilter
 
 eureka:
   client:
