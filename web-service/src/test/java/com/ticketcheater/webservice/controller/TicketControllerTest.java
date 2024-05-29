@@ -3,13 +3,16 @@ package com.ticketcheater.webservice.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ticketcheater.webservice.controller.request.ticket.PaymentRequest;
 import com.ticketcheater.webservice.controller.request.ticket.TicketCreateRequest;
+import com.ticketcheater.webservice.controller.request.ticket.TicketReserveRequest;
 import com.ticketcheater.webservice.dto.PaymentDTO;
 import com.ticketcheater.webservice.dto.TicketDTO;
 import com.ticketcheater.webservice.exception.ErrorCode;
 import com.ticketcheater.webservice.exception.WebApplicationException;
-import com.ticketcheater.webservice.token.JwtProvider;
 import com.ticketcheater.webservice.service.MemberService;
 import com.ticketcheater.webservice.service.TicketService;
+import com.ticketcheater.webservice.token.JwtProvider;
+import com.ticketcheater.webservice.token.TokenGenerator;
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -194,14 +197,58 @@ class TicketControllerTest {
     void givenTicketAndMember_whenReserve_thenReservesTicket() throws Exception {
         String token = "dummy";
         String name = "name";
+        Long gameId = 1L;
+        Long ticketId = 1L;
 
         when(jwtProvider.getName(anyString())).thenReturn(name);
-        when(ticketService.reserveTicket(eq(1L), eq(name))).thenReturn(mock(TicketDTO.class));
+        when(ticketService.reserveTicket(eq(ticketId), eq(name))).thenReturn(mock(TicketDTO.class));
 
-        mvc.perform(post("/v1/web/tickets/reserve/1")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+        mvc.perform(post("/v1/web/tickets/reserve")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(new TicketReserveRequest(gameId, ticketId)))
+                        .cookie(new Cookie("member-queue-1-token", TokenGenerator.generateToken("1", name))))
                 .andDo(print())
                 .andExpect(status().isOk());
+    }
+
+    @DisplayName("쿠키 없이 티켓 예약 시 오류 발생")
+    @Test
+    void givenNoCookie_whenReserve_thenThrowsError() throws Exception {
+        String token = "dummy";
+        String name = "name";
+        Long gameId = 1L;
+        Long ticketId = 1L;
+
+        when(jwtProvider.getName(anyString())).thenReturn(name);
+        when(ticketService.reserveTicket(eq(ticketId), eq(name))).thenReturn(mock(TicketDTO.class));
+
+        mvc.perform(post("/v1/web/tickets/reserve")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(new TicketReserveRequest(gameId, ticketId))))
+                .andDo(print())
+                .andExpect(status().is(ErrorCode.INVALID_TOKEN.getStatus().value()));
+    }
+
+    @DisplayName("부적절한 쿠키로 티켓 예약 시 오류 발생")
+    @Test
+    void givenInvalidCookie_whenReserve_thenThrowsError() throws Exception {
+        String token = "dummy";
+        String name = "name";
+        Long gameId = 1L;
+        Long ticketId = 1L;
+
+        when(jwtProvider.getName(anyString())).thenReturn(name);
+        when(ticketService.reserveTicket(eq(ticketId), eq(name))).thenReturn(mock(TicketDTO.class));
+
+        mvc.perform(post("/v1/web/tickets/reserve")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(new TicketReserveRequest(gameId, ticketId)))
+                        .cookie(new Cookie("member-queue-1-token", "invalid")))
+                .andDo(print())
+                .andExpect(status().is(ErrorCode.INVALID_TOKEN.getStatus().value()));
     }
 
     @DisplayName("없는 회원이 티켓 예약 시 오류 발생")
@@ -209,12 +256,17 @@ class TicketControllerTest {
     void givenNonExistentMember_whenReserve_thenThrowsError() throws Exception {
         String token = "dummy";
         String name = "name";
+        Long gameId = 1L;
+        Long ticketId = 1L;
 
         when(jwtProvider.getName(anyString())).thenReturn(name);
-        when(ticketService.reserveTicket(eq(1L), eq(name))).thenThrow(new WebApplicationException(ErrorCode.MEMBER_NOT_FOUND));
+        when(ticketService.reserveTicket(eq(ticketId), eq(name))).thenThrow(new WebApplicationException(ErrorCode.MEMBER_NOT_FOUND));
 
-        mvc.perform(post("/v1/web/tickets/reserve/1")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+        mvc.perform(post("/v1/web/tickets/reserve")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(new TicketReserveRequest(gameId, ticketId)))
+                        .cookie(new Cookie("member-queue-1-token", TokenGenerator.generateToken("1", name))))
                 .andDo(print())
                 .andExpect(status().is(ErrorCode.MEMBER_NOT_FOUND.getStatus().value()));
     }
@@ -224,12 +276,17 @@ class TicketControllerTest {
     void givenAlreadyBookedTicket_whenReserve_thenThrowsError() throws Exception {
         String token = "dummy";
         String name = "name";
+        Long gameId = 1L;
+        Long ticketId = 1L;
 
         when(jwtProvider.getName(anyString())).thenReturn(name);
-        when(ticketService.reserveTicket(eq(1L), eq(name))).thenThrow(new WebApplicationException(ErrorCode.TICKET_ALREADY_BOOKED));
+        when(ticketService.reserveTicket(eq(ticketId), eq(name))).thenThrow(new WebApplicationException(ErrorCode.TICKET_ALREADY_BOOKED));
 
-        mvc.perform(post("/v1/web/tickets/reserve/1")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+        mvc.perform(post("/v1/web/tickets/reserve")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(new TicketReserveRequest(gameId, ticketId)))
+                        .cookie(new Cookie("member-queue-1-token", TokenGenerator.generateToken("1", name))))
                 .andDo(print())
                 .andExpect(status().is(ErrorCode.TICKET_ALREADY_BOOKED.getStatus().value()));
     }

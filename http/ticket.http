@@ -20,13 +20,28 @@ Content-Type: application/json
 {
   "gameId": 1,
   "gradeId": 1,
-  "quantity": 2000000,
+  "quantity": 2000,
   "price": 18000
 }
 
-### 티켓 예매
-POST http://localhost:8001/web/tickets/reserve/1
+### 대기열 탐색
+GET http://localhost:8001/flow/1
 Authorization: Bearer {{accessToken}}
+
+> {%
+    client.global.set('cookie', response.headers.valueOf('Set-Cookie'));
+%}
+
+### 티켓 예매
+POST http://localhost:8001/web/tickets/reserve
+Authorization: Bearer {{accessToken}}
+Cookie: {{cookie}}
+Content-Type: application/json
+
+{
+  "gameId": 1,
+  "ticketId": 1
+}
 
 ### 티켓 결제
 POST http://localhost:8001/web/tickets/payment/1
