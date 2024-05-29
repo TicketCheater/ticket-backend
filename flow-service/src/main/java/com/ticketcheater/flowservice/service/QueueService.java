@@ -60,7 +60,7 @@ public class QueueService {
                     if(count == 1) {
                         return Mono.just(TokenGenerator.generateToken(gameId, name));
                     } else {
-                        return Mono.empty();
+                        return Mono.just("");
                     }
                 });
     }

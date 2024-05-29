@@ -32,6 +32,5 @@ GET http://localhost:8001/flow/1
 Authorization: Bearer {{accessToken}}
 
 > {%
-    let setCookie = response.headers['Set-Cookie'];
-    client.global.set('cookie', setCookie);
+    client.global.set('cookie', response.headers.valueOf('Set-Cookie'));
 %}
