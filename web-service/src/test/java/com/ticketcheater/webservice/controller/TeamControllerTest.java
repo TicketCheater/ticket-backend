@@ -6,7 +6,7 @@ import com.ticketcheater.webservice.controller.request.team.TeamUpdateRequest;
 import com.ticketcheater.webservice.dto.TeamDTO;
 import com.ticketcheater.webservice.exception.ErrorCode;
 import com.ticketcheater.webservice.exception.WebApplicationException;
-import com.ticketcheater.webservice.jwt.JwtTokenProvider;
+import com.ticketcheater.webservice.token.JwtProvider;
 import com.ticketcheater.webservice.service.MemberService;
 import com.ticketcheater.webservice.service.TeamService;
 import org.junit.jupiter.api.DisplayName;
@@ -39,7 +39,7 @@ class TeamControllerTest {
     MemberService memberService;
 
     @MockBean
-    JwtTokenProvider jwtTokenProvider;
+    JwtProvider jwtProvider;
 
     @MockBean
     TeamService teamService;
@@ -53,7 +53,7 @@ class TeamControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         when(teamService.createTeam(any())).thenReturn(mock(TeamDTO.class));
 
@@ -71,7 +71,7 @@ class TeamControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doThrow(new WebApplicationException(ErrorCode.INVALID_TOKEN)).when(memberService).isAdmin(name);
         when(teamService.createTeam(any())).thenReturn(mock(TeamDTO.class));
 
@@ -89,7 +89,7 @@ class TeamControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         when(teamService.createTeam(any())).thenThrow(new WebApplicationException(ErrorCode.INVALID_TEAM));
 
@@ -107,7 +107,7 @@ class TeamControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         when(teamService.createTeam(any())).thenThrow(new WebApplicationException(ErrorCode.TEAM_ALREADY_EXISTS));
 
@@ -125,7 +125,7 @@ class TeamControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         when(teamService.updateTeam(eq(1L), any())).thenReturn(mock(TeamDTO.class));
 
@@ -143,7 +143,7 @@ class TeamControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         when(teamService.updateTeam(eq(1L), any())).thenThrow(new WebApplicationException(ErrorCode.TEAM_NOT_FOUND));
 
@@ -161,7 +161,7 @@ class TeamControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         when(teamService.updateTeam(eq(1L), any())).thenThrow(new WebApplicationException(ErrorCode.INVALID_TEAM));
 
@@ -179,7 +179,7 @@ class TeamControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doThrow(new WebApplicationException(ErrorCode.INVALID_TOKEN)).when(memberService).isAdmin(name);
         when(teamService.updateTeam(eq(1L), any())).thenReturn(mock(TeamDTO.class));
 
@@ -197,7 +197,7 @@ class TeamControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         doNothing().when(teamService).deleteTeam(eq(1L));
 
@@ -213,7 +213,7 @@ class TeamControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         doThrow(new WebApplicationException(ErrorCode.TEAM_NOT_FOUND)).when(teamService).deleteTeam(eq(1L));
 
@@ -229,7 +229,7 @@ class TeamControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doThrow(new WebApplicationException(ErrorCode.INVALID_TOKEN)).when(memberService).isAdmin(name);
         doNothing().when(teamService).deleteTeam(eq(1L));
 
@@ -245,7 +245,7 @@ class TeamControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         doNothing().when(teamService).restoreTeam(eq(1L));
 
@@ -261,7 +261,7 @@ class TeamControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         doThrow(new WebApplicationException(ErrorCode.TEAM_ALREADY_EXISTS)).when(teamService).restoreTeam(eq(1L));
 
@@ -277,7 +277,7 @@ class TeamControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doThrow(new WebApplicationException(ErrorCode.INVALID_TOKEN)).when(memberService).isAdmin(name);
         doNothing().when(teamService).restoreTeam(eq(1L));
 

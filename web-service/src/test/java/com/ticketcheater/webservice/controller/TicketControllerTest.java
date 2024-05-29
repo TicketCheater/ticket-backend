@@ -7,7 +7,7 @@ import com.ticketcheater.webservice.dto.PaymentDTO;
 import com.ticketcheater.webservice.dto.TicketDTO;
 import com.ticketcheater.webservice.exception.ErrorCode;
 import com.ticketcheater.webservice.exception.WebApplicationException;
-import com.ticketcheater.webservice.jwt.JwtTokenProvider;
+import com.ticketcheater.webservice.token.JwtProvider;
 import com.ticketcheater.webservice.service.MemberService;
 import com.ticketcheater.webservice.service.TicketService;
 import org.junit.jupiter.api.DisplayName;
@@ -39,7 +39,7 @@ class TicketControllerTest {
     MemberService memberService;
 
     @MockBean
-    JwtTokenProvider jwtTokenProvider;
+    JwtProvider jwtProvider;
 
     @MockBean
     TicketService ticketService;
@@ -58,7 +58,7 @@ class TicketControllerTest {
         int quantity = 20000;
         int price = 18000;
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         doNothing().when(ticketService).createTickets(eq(1L), eq(1L), eq(20000), eq(18000));
 
@@ -81,7 +81,7 @@ class TicketControllerTest {
         int quantity = 20000;
         int price = 18000;
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doThrow(new WebApplicationException(ErrorCode.INVALID_TOKEN)).when(memberService).isAdmin(name);
         doNothing().when(ticketService).createTickets(eq(1L), eq(1L), eq(20000), eq(18000));
 
@@ -104,7 +104,7 @@ class TicketControllerTest {
         int quantity = -1;
         int price = 18000;
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         doThrow(new WebApplicationException(ErrorCode.INVALID_TICKET_QUANTITY))
                 .when(ticketService).createTickets(eq(1L), eq(1L), eq(-1), eq(18000));
@@ -128,7 +128,7 @@ class TicketControllerTest {
         int quantity = 20000;
         int price = -1;
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         doThrow(new WebApplicationException(ErrorCode.INVALID_TICKET_PRICE))
                 .when(ticketService).createTickets(eq(1L), eq(1L), eq(20000), eq(-1));
@@ -152,7 +152,7 @@ class TicketControllerTest {
         int quantity = 20000;
         int price = 18000;
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         doThrow(new WebApplicationException(ErrorCode.GAME_NOT_FOUND))
                 .when(ticketService).createTickets(eq(1L), eq(1L), eq(20000), eq(18000));
@@ -176,7 +176,7 @@ class TicketControllerTest {
         int quantity = 20000;
         int price = 18000;
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         doThrow(new WebApplicationException(ErrorCode.GRADE_NOT_FOUND))
                 .when(ticketService).createTickets(eq(1L), eq(1L), eq(20000), eq(18000));
@@ -195,7 +195,7 @@ class TicketControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         when(ticketService.reserveTicket(eq(1L), eq(name))).thenReturn(mock(TicketDTO.class));
 
         mvc.perform(post("/v1/web/tickets/reserve/1")
@@ -210,7 +210,7 @@ class TicketControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         when(ticketService.reserveTicket(eq(1L), eq(name))).thenThrow(new WebApplicationException(ErrorCode.MEMBER_NOT_FOUND));
 
         mvc.perform(post("/v1/web/tickets/reserve/1")
@@ -225,7 +225,7 @@ class TicketControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         when(ticketService.reserveTicket(eq(1L), eq(name))).thenThrow(new WebApplicationException(ErrorCode.TICKET_ALREADY_BOOKED));
 
         mvc.perform(post("/v1/web/tickets/reserve/1")
@@ -242,7 +242,7 @@ class TicketControllerTest {
         String method = "card";
         int amount = 20000;
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         when(ticketService.createPayment(eq(1L), eq(name), eq(method), eq(amount))).thenReturn(mock(PaymentDTO.class));
 
         mvc.perform(post("/v1/web/tickets/payment/1")
@@ -261,7 +261,7 @@ class TicketControllerTest {
         String method = "card";
         int amount = 20000;
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         when(ticketService.createPayment(eq(1L), eq(name), eq(method), eq(amount))).thenThrow(new WebApplicationException(ErrorCode.TICKET_NOT_FOUND));
 
         mvc.perform(post("/v1/web/tickets/payment/1")
@@ -280,7 +280,7 @@ class TicketControllerTest {
         String method = "card";
         int amount = 20000;
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         when(ticketService.createPayment(eq(1L), eq(name), eq(method), eq(amount))).thenThrow(new WebApplicationException(ErrorCode.INVALID_TICKET_PRICE));
 
         mvc.perform(post("/v1/web/tickets/payment/1")
@@ -299,7 +299,7 @@ class TicketControllerTest {
         String method = "card";
         int amount = 20000;
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         when(ticketService.createPayment(eq(1L), eq(name), eq(method), eq(amount))).thenThrow(new WebApplicationException(ErrorCode.MEMBER_NOT_FOUND));
 
         mvc.perform(post("/v1/web/tickets/payment/1")
@@ -318,7 +318,7 @@ class TicketControllerTest {
         String method = "invalid";
         int amount = 20000;
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         when(ticketService.createPayment(eq(1L), eq(name), eq(method), eq(amount))).thenThrow(new WebApplicationException(ErrorCode.PAYMENT_METHOD_NOT_FOUND));
 
         mvc.perform(post("/v1/web/tickets/payment/1")

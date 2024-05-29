@@ -2,7 +2,7 @@ package com.ticketcheater.webservice.interceptor;
 
 import com.ticketcheater.webservice.exception.ErrorCode;
 import com.ticketcheater.webservice.exception.WebApplicationException;
-import com.ticketcheater.webservice.jwt.JwtTokenProvider;
+import com.ticketcheater.webservice.token.JwtProvider;
 import com.ticketcheater.webservice.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,11 +15,11 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @Component
 public class AdminInterceptor implements HandlerInterceptor {
 
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtProvider jwtProvider;
     private final MemberService memberService;
 
-    public AdminInterceptor(JwtTokenProvider jwtTokenProvider, MemberService memberService) {
-        this.jwtTokenProvider = jwtTokenProvider;
+    public AdminInterceptor(JwtProvider jwtProvider, MemberService memberService) {
+        this.jwtProvider = jwtProvider;
         this.memberService = memberService;
     }
 
@@ -38,7 +38,7 @@ public class AdminInterceptor implements HandlerInterceptor {
                     throw new WebApplicationException(ErrorCode.INVALID_TOKEN, "Authorization header is missing or empty");
                 }
 
-                memberService.isAdmin(jwtTokenProvider.getName(token));
+                memberService.isAdmin(jwtProvider.getName(token));
             }
         }
         return true;

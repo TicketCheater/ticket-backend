@@ -6,7 +6,7 @@ import com.ticketcheater.webservice.controller.request.place.PlaceUpdateRequest;
 import com.ticketcheater.webservice.dto.PlaceDTO;
 import com.ticketcheater.webservice.exception.ErrorCode;
 import com.ticketcheater.webservice.exception.WebApplicationException;
-import com.ticketcheater.webservice.jwt.JwtTokenProvider;
+import com.ticketcheater.webservice.token.JwtProvider;
 import com.ticketcheater.webservice.service.MemberService;
 import com.ticketcheater.webservice.service.PlaceService;
 import org.junit.jupiter.api.DisplayName;
@@ -39,7 +39,7 @@ class PlaceControllerTest {
     MemberService memberService;
 
     @MockBean
-    JwtTokenProvider jwtTokenProvider;
+    JwtProvider jwtProvider;
 
     @MockBean
     PlaceService placeService;
@@ -53,7 +53,7 @@ class PlaceControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         when(placeService.createPlace(any())).thenReturn(mock(PlaceDTO.class));
 
@@ -71,7 +71,7 @@ class PlaceControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doThrow(new WebApplicationException(ErrorCode.INVALID_TOKEN)).when(memberService).isAdmin(name);
         when(placeService.createPlace(any())).thenReturn(mock(PlaceDTO.class));
 
@@ -89,7 +89,7 @@ class PlaceControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         when(placeService.createPlace(any())).thenThrow(new WebApplicationException(ErrorCode.INVALID_PLACE));
 
@@ -107,7 +107,7 @@ class PlaceControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         when(placeService.createPlace(any())).thenThrow(new WebApplicationException(ErrorCode.PLACE_ALREADY_EXISTS));
 
@@ -125,7 +125,7 @@ class PlaceControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         when(placeService.updatePlace(eq(1L), any())).thenReturn(mock(PlaceDTO.class));
 
@@ -143,7 +143,7 @@ class PlaceControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         when(placeService.updatePlace(eq(1L), any())).thenThrow(new WebApplicationException(ErrorCode.PLACE_NOT_FOUND));
 
@@ -161,7 +161,7 @@ class PlaceControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         when(placeService.updatePlace(eq(1L), any())).thenThrow(new WebApplicationException(ErrorCode.INVALID_PLACE));
 
@@ -179,7 +179,7 @@ class PlaceControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doThrow(new WebApplicationException(ErrorCode.INVALID_TOKEN)).when(memberService).isAdmin(name);
         when(placeService.updatePlace(eq(1L), any())).thenReturn(mock(PlaceDTO.class));
 
@@ -197,7 +197,7 @@ class PlaceControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         doNothing().when(placeService).deletePlace(eq(1L));
 
@@ -213,7 +213,7 @@ class PlaceControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         doThrow(new WebApplicationException(ErrorCode.PLACE_NOT_FOUND)).when(placeService).deletePlace(eq(1L));
 
@@ -229,7 +229,7 @@ class PlaceControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doThrow(new WebApplicationException(ErrorCode.INVALID_TOKEN)).when(memberService).isAdmin(name);
         doNothing().when(placeService).deletePlace(eq(1L));
 
@@ -245,7 +245,7 @@ class PlaceControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         doNothing().when(placeService).restorePlace(eq(1L));
 
@@ -261,7 +261,7 @@ class PlaceControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).isAdmin(name);
         doThrow(new WebApplicationException(ErrorCode.PLACE_NOT_FOUND)).when(placeService).restorePlace(eq(1L));
 
@@ -277,7 +277,7 @@ class PlaceControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doThrow(new WebApplicationException(ErrorCode.INVALID_TOKEN)).when(memberService).isAdmin(name);
         doNothing().when(placeService).restorePlace(eq(1L));
 

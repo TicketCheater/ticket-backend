@@ -6,7 +6,7 @@ import com.ticketcheater.webservice.controller.request.ticket.TicketCreateReques
 import com.ticketcheater.webservice.controller.response.Response;
 import com.ticketcheater.webservice.controller.response.ticket.PaymentResponse;
 import com.ticketcheater.webservice.controller.response.ticket.TicketReserveResponse;
-import com.ticketcheater.webservice.jwt.JwtTokenProvider;
+import com.ticketcheater.webservice.token.JwtProvider;
 import com.ticketcheater.webservice.service.TicketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 public class TicketController {
 
     private final TicketService ticketService;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtProvider jwtProvider;
 
     @RequireAdmin
     @PostMapping("/create")
@@ -33,7 +33,7 @@ public class TicketController {
             @RequestHeader(HttpHeaders.AUTHORIZATION) String header
     ) {
         return Response.success(TicketReserveResponse.from(ticketService.reserveTicket(
-                ticketId, jwtTokenProvider.getName(header)
+                ticketId, jwtProvider.getName(header)
         )));
     }
 
@@ -44,7 +44,7 @@ public class TicketController {
             @RequestBody PaymentRequest request
     ) {
         return Response.success(PaymentResponse.from(ticketService.createPayment(
-                ticketId, jwtTokenProvider.getName(header), request.getMethod(), request.getAmount()
+                ticketId, jwtProvider.getName(header), request.getMethod(), request.getAmount()
         )));
     }
 

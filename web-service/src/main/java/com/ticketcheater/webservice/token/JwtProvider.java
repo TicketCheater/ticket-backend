@@ -1,4 +1,4 @@
-package com.ticketcheater.webservice.jwt;
+package com.ticketcheater.webservice.token;
 
 import com.ticketcheater.webservice.exception.ErrorCode;
 import com.ticketcheater.webservice.exception.WebApplicationException;
@@ -16,7 +16,7 @@ import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
-public class JwtTokenProvider {
+public class JwtProvider {
 
     private final TokenCacheRepository tokenCacheRepository;
 

@@ -5,8 +5,8 @@ import com.ticketcheater.webservice.controller.request.member.*;
 import com.ticketcheater.webservice.dto.MemberDTO;
 import com.ticketcheater.webservice.exception.ErrorCode;
 import com.ticketcheater.webservice.exception.WebApplicationException;
-import com.ticketcheater.webservice.jwt.JwtTokenProvider;
-import com.ticketcheater.webservice.jwt.TokenDTO;
+import com.ticketcheater.webservice.token.JwtProvider;
+import com.ticketcheater.webservice.token.JwtDTO;
 import com.ticketcheater.webservice.service.MemberService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,7 +38,7 @@ class MemberControllerTest {
     MemberService memberService;
 
     @MockBean
-    JwtTokenProvider jwtTokenProvider;
+    JwtProvider jwtProvider;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -100,7 +100,7 @@ class MemberControllerTest {
         String name = "name";
         String password = "!password12";
 
-        when(memberService.login(name, password)).thenReturn(mock(TokenDTO.class));
+        when(memberService.login(name, password)).thenReturn(mock(JwtDTO.class));
 
         mvc.perform(post("/v1/web/members/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -146,7 +146,7 @@ class MemberControllerTest {
         String name = "name";
         String password = "!password12";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         when(memberService.validateMember(name, password)).thenReturn(true);
 
         mvc.perform(post("/v1/web/members/validate")
@@ -165,7 +165,7 @@ class MemberControllerTest {
         String name = "name";
         String password = "!password12";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         when(memberService.validateMember(name, password)).thenReturn(false);
 
         mvc.perform(post("/v1/web/members/validate")
@@ -184,7 +184,7 @@ class MemberControllerTest {
         String name = "name";
         String password = "!password12";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         when(memberService.validateMember(name, password)).thenThrow(new WebApplicationException(ErrorCode.MEMBER_NOT_FOUND));
 
         mvc.perform(post("/v1/web/members/validate")
@@ -200,7 +200,7 @@ class MemberControllerTest {
     void givenRefreshToken_whenReissue_thenReturnsAccessToken() throws Exception {
         String refreshToken = "dummy";
 
-        when(jwtTokenProvider.reissueAccessToken(refreshToken)).thenReturn(any());
+        when(jwtProvider.reissueAccessToken(refreshToken)).thenReturn(any());
 
         mvc.perform(post("/v1/web/members/reissue")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -214,7 +214,7 @@ class MemberControllerTest {
     void givenInvalidRefreshToken_whenReissue_thenThrowsError() throws Exception {
         String refreshToken = "dummy";
 
-        when(jwtTokenProvider.reissueAccessToken(refreshToken)).thenThrow(new WebApplicationException(ErrorCode.INVALID_TOKEN));
+        when(jwtProvider.reissueAccessToken(refreshToken)).thenThrow(new WebApplicationException(ErrorCode.INVALID_TOKEN));
 
         mvc.perform(post("/v1/web/members/reissue")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -228,7 +228,7 @@ class MemberControllerTest {
     void givenExpiredRefreshToken_whenReissue_thenThrowsError() throws Exception {
         String refreshToken = "dummy";
 
-        when(jwtTokenProvider.reissueAccessToken(refreshToken)).thenThrow(new WebApplicationException(ErrorCode.EXPIRED_REFRESH_TOKEN));
+        when(jwtProvider.reissueAccessToken(refreshToken)).thenThrow(new WebApplicationException(ErrorCode.EXPIRED_REFRESH_TOKEN));
 
         mvc.perform(post("/v1/web/members/reissue")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -245,7 +245,7 @@ class MemberControllerTest {
         String password = "!password12";
         String nickname = "nickname";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         when(memberService.updateMember(name, password, nickname)).thenReturn(mock(MemberDTO.class));
 
         mvc.perform(patch("/v1/web/members/update")
@@ -264,7 +264,7 @@ class MemberControllerTest {
         String password = "!password12";
         String nickname = "nickname";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         when(memberService.updateMember(name, password, nickname)).thenThrow(new WebApplicationException(ErrorCode.MEMBER_NOT_FOUND));
 
         mvc.perform(patch("/v1/web/members/update")
@@ -283,7 +283,7 @@ class MemberControllerTest {
         String password = "!password12";
         String nickname = "nickname";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         when(memberService.updateMember(name, password, nickname)).thenThrow(new WebApplicationException(ErrorCode.INVALID_PASSWORD));
 
         mvc.perform(patch("/v1/web/members/update")
@@ -300,7 +300,7 @@ class MemberControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doNothing().when(memberService).deleteMember(name);
 
         mvc.perform(patch("/v1/web/members/delete")
@@ -316,7 +316,7 @@ class MemberControllerTest {
         String token = "dummy";
         String name = "name";
 
-        when(jwtTokenProvider.getName(anyString())).thenReturn(name);
+        when(jwtProvider.getName(anyString())).thenReturn(name);
         doThrow(new WebApplicationException(ErrorCode.MEMBER_NOT_FOUND)).when(memberService).deleteMember(name);
 
         mvc.perform(patch("/v1/web/members/delete")
