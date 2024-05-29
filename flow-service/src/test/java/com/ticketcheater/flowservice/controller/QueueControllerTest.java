@@ -1,5 +1,7 @@
 package com.ticketcheater.flowservice.controller;
 
+import com.ticketcheater.flowservice.controller.response.RankResponse;
+import com.ticketcheater.flowservice.controller.response.TokenResponse;
 import com.ticketcheater.flowservice.exception.ErrorCode;
 import com.ticketcheater.flowservice.exception.FlowApplicationException;
 import com.ticketcheater.flowservice.service.QueueService;
@@ -14,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -76,7 +79,12 @@ class QueueControllerTest {
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()
-                .expectStatus().isOk();
+                .expectStatus().isOk()
+                .expectBody(TokenResponse.class)
+                .consumeWith(response -> {
+                    TokenResponse tokenResponse = response.getResponseBody();
+                    assertThat(tokenResponse).isNotNull();
+                });
     }
 
     @DisplayName("대기열 정보 조회 - 랭킹 조회")
@@ -88,14 +96,19 @@ class QueueControllerTest {
         long rank = 1L;
 
         when(tokenParser.getName(anyString())).thenReturn(name);
-        when(queueService.processMember(anyString(), anyString())).thenReturn(Mono.empty());
+        when(queueService.processMember(anyString(), anyString())).thenReturn(Mono.just(""));
         when(queueService.getRank(anyString(), anyString())).thenReturn(Mono.just(rank));
 
         webTestClient.get().uri("/v1/flow/" + gameId)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()
-                .expectStatus().isOk();
+                .expectStatus().isOk()
+                .expectBody(RankResponse.class)
+                .consumeWith(response -> {
+                    RankResponse rankResponse = response.getResponseBody();
+                    assertThat(rankResponse).isNotNull();
+                });
     }
 
 }

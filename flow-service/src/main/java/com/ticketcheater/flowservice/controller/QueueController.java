@@ -41,7 +41,7 @@ public class QueueController {
         String name = tokenParser.getName(header);
         return queueService.processMember(gameId, name)
                 .flatMap(token -> {
-                    if (token != null) {
+                    if (!token.isEmpty()) {
                         exchange.getResponse().addCookie(
                                 ResponseCookie.from("member-queue-%s-token".formatted(gameId), token)
                                         .maxAge(Duration.ofSeconds(300))
