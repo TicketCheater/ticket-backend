@@ -29,6 +29,7 @@ public class QueueService {
 
     public Mono<Long> registerWaitQueue(String gameId, String name) {
         long timestamp = System.currentTimeMillis();
+        log.info("Registering {} for game {} at {}", name, gameId, timestamp);
         return reactiveRedisTemplate.opsForZSet().add(MEMBERS_QUEUE_WAIT_KEY.formatted(gameId), name, timestamp)
                 .filter(i -> i)
                 .switchIfEmpty(Mono.error(() -> new FlowApplicationException(ErrorCode.ALREADY_REGISTERED_MEMBER, String.format("%s is already registered", name))))
@@ -37,29 +38,34 @@ public class QueueService {
     }
 
     public Mono<Long> getRank(String gameId, String name) {
+        log.info("Fetching rank for {} in game {}", name, gameId);
         return reactiveRedisTemplate.opsForZSet().rank(MEMBERS_QUEUE_WAIT_KEY.formatted(gameId), name)
                 .defaultIfEmpty(-1L)
                 .map(i -> i>=0 ? i+1 : i);
     }
 
     public Mono<Long> allowMember(String gameId) {
+        log.info("Allowing members for game {}", gameId);
         return reactiveRedisTemplate.opsForZSet().popMin(MEMBERS_QUEUE_WAIT_KEY.formatted(gameId), ALLOW_COUNT)
                 .flatMap(member -> {
                     if (member == null || member.getValue() == null) {
-                        log.warn("Member or its value is null.");
                         return Mono.just(0L);
                     }
                     return reactiveRedisTemplate.opsForSet().add(MEMBER_QUEUE_PROCEED_KEY.formatted(gameId), member.getValue());
                 })
-                .count();
+                .count()
+                .doOnNext(count -> log.info("{} members allowed to proceed for game {}", count, gameId));
     }
 
     public Mono<String> processMember(String gameId, String name) {
+        log.info("Processing member {} for game {}", name, gameId);
         return reactiveRedisTemplate.opsForSet().remove(MEMBER_QUEUE_PROCEED_KEY.formatted(gameId), name)
                 .flatMap(count -> {
                     if(count == 1) {
+                        log.info("Generating token for member {} in game {}", name, gameId);
                         return Mono.just(TokenGenerator.generateToken(gameId, name));
                     } else {
+                        log.info("Member {} not found in proceed set for game {}", name, gameId);
                         return Mono.just("");
                     }
                 });

@@ -15,6 +15,14 @@ services:
       - redis-data2:/data
     command: redis-server --appendonly yes
 
+  zipkin:
+    image: ghcr.io/openzipkin/zipkin-slim:${TAG:-latest}
+    container_name: zipkin
+    environment:
+      - STORAGE_TYPE=mem
+    ports:
+      - 9411:9411
+
 volumes:
   redis-data:
   redis-data2:  # 새로운 볼륨 정의
