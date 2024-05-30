@@ -12,6 +12,9 @@ java {
 }
 
 configurations {
+	configureEach {
+		exclude group: 'ch.qos.logback', module: 'spring-boot-starer-logging'
+	}
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
@@ -41,6 +44,10 @@ dependencies {
 	implementation 'io.micrometer:micrometer-tracing-bridge-brave'
 	implementation 'io.zipkin.reporter2:zipkin-reporter-brave'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+	implementation 'org.apache.logging.log4j:log4j-api'
+	implementation 'org.apache.logging.log4j:log4j-core'
+	implementation 'org.apache.logging.log4j:log4j-slf4j-impl'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.testcontainers:testcontainers:1.19.8'
